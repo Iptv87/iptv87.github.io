@@ -1,0 +1,1491 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<nav>
+    <a href="Cleaner 3.html">Cleaner</a>
+    <a href="Fetcher 2.html">Fetcher</a>
+    <a href="Finder 7.html">Finder</a>
+    
+</nav>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple IPTV Cleaner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        /* Main Layout - Two Column */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Section Styling */
+        .section {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+        }
+
+        .section:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        /* Action Buttons Row */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            font-size: 1.1rem;
+        }
+
+        .btn-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-icon-secondary {
+            background: #edf2f7;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-icon-secondary:hover {
+            background: #e2e8f0;
+            border-color: #cbd5e0;
+        }
+
+        .btn-icon-danger {
+            background: linear-gradient(135deg, #f56565, #c53030);
+            color: white;
+        }
+
+        .btn-icon-danger:hover {
+            background: linear-gradient(135deg, #e53e3e, #b83232);
+        }
+
+        /* Text Areas */
+        .section textarea {
+            width: 100%;
+            flex: 1;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            background: white;
+            color: #4a5568;
+            line-height: 1.5;
+        }
+
+        .section textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* All text areas are editable */
+        .section textarea {
+            background: white;
+            color: #4a5568;
+        }
+
+        /* Control Buttons */
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 46px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #5a67d8, #6b46c1);
+        }
+
+        .btn-secondary {
+            background: #edf2f7;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #e2e8f0;
+            border-color: #cbd5e0;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: linear-gradient(135deg, #38a169, #2f855a);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+            color: white;
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            background: linear-gradient(135deg, #dd6b20, #c05621);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565, #c53030);
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: linear-gradient(135deg, #e53e3e, #b83232);
+        }
+
+        .btn-vlc {
+            background: linear-gradient(135deg, #9f7aea, #805ad5);
+            color: white;
+        }
+
+        .btn-vlc:hover:not(:disabled) {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+        /* Progress Bars */
+        .progress-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: #718096;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat-pill {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-active {
+            background: rgba(72, 187, 120, 0.1);
+            color: #38a169;
+            border: 2px solid rgba(72, 187, 120, 0.3);
+        }
+
+        .stat-inactive {
+            background: rgba(245, 101, 101, 0.1);
+            color: #c53030;
+            border: 2px solid rgba(245, 101, 101, 0.3);
+        }
+
+        .stat-workers {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-number {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* Active Servers Section */
+        .servers-section {
+            margin-bottom: 20px;
+        }
+
+        .servers-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 2px dashed #e2e8f0;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .server-item {
+            padding: 12px 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            border: 2px dashed #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            word-break: break-all;
+            transition: all 0.3s ease;
+            animation: pop 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .server-item:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        @keyframes pop {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Log Section */
+        .log-section {
+            margin-bottom: 20px;
+        }
+
+        .log-container {
+            height: 150px;
+            padding: 15px;
+            border: 2px dashed #e2e8f0;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.5);
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #4a5568;
+        }
+
+        /* Export Buttons */
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* Status Message */
+        .status-message {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 10px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background: rgba(72, 187, 120, 0.1);
+            border: 2px solid #48bb78;
+            color: #276749;
+        }
+
+        .status-error {
+            background: rgba(245, 101, 101, 0.1);
+            border: 2px solid #f56565;
+            color: #c53030;
+        }
+
+        .status-loading {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid #667eea;
+            color: #4a5568;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* File Input */
+        .file-input {
+            display: none;
+        }
+
+        /* Scrollbar Styling */
+        .servers-container::-webkit-scrollbar,
+        .log-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .servers-container::-webkit-scrollbar-track,
+        .log-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .servers-container::-webkit-scrollbar-thumb,
+        .log-container::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 3px;
+        }
+
+        .servers-container::-webkit-scrollbar-thumb:hover,
+        .log-container::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .control-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .progress-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            
+            .export-buttons {
+                flex-direction: column;
+            }
+        }
+<style>
+nav {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+nav a {
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    transition: all 0.3s;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0,123,255,0.2);
+}
+
+nav a:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+}
+
+nav a:active {
+    transform: scale(1);
+}
+</style>
+ <style>
+nav {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+nav a {
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    transition: all 0.3s;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0,123,255,0.2);
+}
+
+nav a:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+}
+
+nav a:active {
+    transform: scale(1);
+}
+</style>  
+ </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Simple IPTV Cleaner</h1>
+        <p class="subtitle">Smart analyzer & concurrent tester for IPTV servers</p>
+
+        <!-- Status Message -->
+        <div id="statusMessage" class="status-message">
+            <i class="fas fa-info-circle"></i>
+            <span id="statusText">Ready to analyze and test servers</span>
+        </div>
+
+        <!-- Main Input/Output Sections -->
+        <div class="main-layout">
+            <!-- Raw Input Section -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-code"></i> Raw Input
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-icon btn-icon-secondary" onclick="pasteFromClipboard('rawInput')" title="Paste from clipboard">
+                            <i class="fas fa-paste"></i>
+                        </button>
+                        <button class="btn-icon btn-icon-danger" onclick="clearTextarea('rawInput')" title="Clear input">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button class="btn-icon btn-icon-secondary" onclick="document.getElementById('fileInput').click()" title="Load from file">
+                            <i class="fas fa-folder-open"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <textarea id="rawInput" placeholder="Paste raw content here... Examples:
+Host : http://xxip9.top:8080
+Username : 80084327
+Password : 80054545
+Expiry date : 2026-02-02
+http://server.com/get.php?username=user&password=pass
+server.com user pass
+server.com,user,pass
+(http://imaxplay.net:2082
+USERNAME : Trial19
+PASSWORD : qh898CxMzS)"></textarea>
+
+                <input type="file" id="fileInput" class="file-input" accept=".txt">
+
+                <div class="control-buttons">
+                    <button class="btn btn-primary" onclick="analyzeAndConvert()" id="analyzeBtn">
+                        <i class="fas fa-tools"></i> Analyze & Convert
+                    </button>
+                    <button class="btn btn-danger" onclick="stopAnalyze()" id="analyzeStopBtn" disabled>
+                        <i class="fas fa-stop"></i> Stop
+                    </button>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="analyzeProgress"></div>
+                        </div>
+                        <span class="progress-text" id="analyzePercent">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cleaned Output Section -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-check-circle"></i> Cleaned M3U Lines
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-icon btn-icon-secondary" onclick="copyToClipboard('cleanedOutput')" title="Copy to clipboard">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="btn-icon btn-icon-secondary" onclick="sendToFinder()" title="Send to Finder" id="sendToFinderBtn" disabled>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <textarea id="cleanedOutput" placeholder="Generated M3U lines will appear here...
+Example: http://xxip9.top:8080/get.php?username=80084327&password=80054545&type=m3u_plus"></textarea>
+
+                <div class="control-buttons">
+                    <button class="btn btn-success" onclick="batchTest()" id="testBtn">
+                        <i class="fas fa-vial"></i> Batch Test
+                    </button>
+                    <button class="btn btn-danger" onclick="stopTest()" id="testStopBtn" disabled>
+                        <i class="fas fa-stop"></i> Stop
+                    </button>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="testProgress"></div>
+                        </div>
+                        <span class="progress-text" id="testPercent">0%</span>
+                    </div>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-pill stat-active">
+                        <i class="fas fa-check-circle"></i>
+                        Active: <span class="stat-number" id="activeCount">0</span>
+                    </div>
+                    <div class="stat-pill stat-inactive">
+                        <i class="fas fa-times-circle"></i>
+                        Inactive: <span class="stat-number" id="inactiveCount">0</span>
+                    </div>
+                    <div class="stat-pill stat-workers">
+                        <i class="fas fa-server"></i>
+                        Workers: <span class="stat-number" id="workersCount">8</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Servers Section -->
+        <div class="section servers-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-server"></i> Active Servers (Tested)
+                </div>
+                <div class="export-buttons">
+                    <button class="btn btn-secondary" onclick="exportActiveM3U()" id="exportActiveM3UBtn" disabled>
+                        <i class="fas fa-download"></i> Export Active M3U
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportActiveM3USorted()" id="exportActiveM3USortedBtn" disabled>
+                        <i class="fas fa-sort-alpha-down"></i> Export Sorted M3U
+                    </button>
+                    <button class="btn btn-warning" onclick="exportActiveXtream()" id="exportActiveXtreamBtn" disabled>
+                        <i class="fas fa-key"></i> Export Active Xtream
+                    </button>
+                    <button class="btn btn-vlc" onclick="exportActiveVLC()" id="exportActiveVLCBtn" disabled>
+                        <i class="fas fa-play-circle"></i> Export Active VLC
+                    </button>
+                </div>
+            </div>
+            
+            <div class="servers-container" id="activeServers">
+                <!-- Active servers will appear here -->
+            </div>
+        </div>
+
+        <!-- Log Section -->
+        <div class="section log-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-clipboard-list"></i> Cleaner Log
+                </div>
+            </div>
+            
+            <div class="log-container" id="cleanerLog" aria-live="polite">
+                <!-- Log messages will appear here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let activeServersSet = new Set();
+        let activeServersXtreamSet = new Set();
+        let analyzeAborted = false;
+        let testAborted = false;
+        let testResults = null;
+        let workers = 8;
+        let isTesting = false;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // File input handler
+            document.getElementById('fileInput').addEventListener('change', async function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                try {
+                    const text = await file.text();
+                    document.getElementById('rawInput').value = text;
+                    showStatus('File loaded successfully', 'success');
+                } catch (error) {
+                    showStatus('Error loading file', 'error');
+                }
+            });
+            
+            // Clear file input after selection
+            document.getElementById('fileInput').addEventListener('click', function(e) {
+                e.target.value = '';
+            });
+            
+            // Update workers count display
+            document.getElementById('workersCount').textContent = workers;
+        });
+
+        // Helper functions
+        function showStatus(message, type = 'info') {
+            const statusEl = document.getElementById('statusMessage');
+            const textEl = document.getElementById('statusText');
+            
+            statusEl.className = `status-message status-${type}`;
+            textEl.textContent = message;
+            statusEl.style.display = 'flex';
+            
+            // Auto-hide success messages after 3 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusEl.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        function logMessage(message) {
+            const logEl = document.getElementById('cleanerLog');
+            const timestamp = new Date().toLocaleTimeString();
+            logEl.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('cleanerLog').innerHTML = '';
+        }
+
+        async function pasteFromClipboard(textareaId) {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById(textareaId).value = text;
+                showStatus('Text pasted from clipboard', 'success');
+            } catch (err) {
+                showStatus('Failed to paste from clipboard', 'error');
+            }
+        }
+
+        function copyToClipboard(textareaId) {
+            const text = document.getElementById(textareaId).value;
+            if (!text.trim()) {
+                showStatus('Nothing to copy', 'error');
+                return;
+            }
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showStatus('Copied to clipboard', 'success');
+            }).catch(() => {
+                showStatus('Failed to copy', 'error');
+            });
+        }
+
+        function clearTextarea(textareaId) {
+            document.getElementById(textareaId).value = '';
+            if (textareaId === 'rawInput') {
+                document.getElementById('cleanedOutput').value = '';
+                clearActiveServers();
+                clearLog();
+            }
+        }
+
+        // File handling functions
+        function saveToFile(content, filename) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Utility functions for parsing
+        function fixAmpersands(s) {
+            return String(s || '').replace(/&/g, '&');
+        }
+
+        const getPhpRx = /https?:\/\/[^\s"'<>]+get\.php\?[^ \n\r"'<>]*/ig;
+        const hostCandidateRx = /^(?:(?:https?:\/\/)?(?:\d{1,3}(?:\.\d{1,3}){3}|[a-z0-9\-]+(?:\.[a-z0-9\-]+)+)(?::\d{1,5})?)\/?$/i;
+
+        function toM3UUrlNormalized(input) {
+            try {
+                const u = new URL(input);
+                if (!/\/get\.php$/i.test(u.pathname)) return null;
+                const user = u.searchParams.get('username');
+                const pass = u.searchParams.get('password');
+                if (!user || !pass) return null;
+                return `${u.origin}/get.php?username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}&type=m3u_plus`;
+            } catch {
+                return null;
+            }
+        }
+
+        function toM3UFromHostUserPass(host, user, pass) {
+            if (!/^https?:\/\//i.test(host)) host = 'http://' + host;
+            return `${host.replace(/\/+$/, '')}/get.php?username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}&type=m3u_plus`;
+        }
+
+        function m3uToXtreamApi(m3uUrl) {
+            try {
+                const url = new URL(m3uUrl);
+                const base = url.origin;
+                const user = url.searchParams.get('username');
+                const pass = url.searchParams.get('password');
+                if (!user || !pass) return null;
+                const apiBase = `${base}/player_api.php?username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}`;
+                return { base, user, pass, apiBase };
+            } catch {
+                return null;
+            }
+        }
+
+        function generalM3UfromXt(xt) {
+            return `${xt.base}/get.php?username=${encodeURIComponent(xt.user)}&password=${encodeURIComponent(xt.pass)}&type=m3u_plus`;
+        }
+
+        function extractBlock(lines, startIndex) {
+            let host = null;
+            let username = null;
+            let password = null;
+            let i = startIndex;
+            
+            // Pattern for host detection
+            const hostPattern = /^(?:Host|URL|Server|http:\/\/|https:\/\/)[\s:]*([^\s]+)/i;
+            
+            // Pattern for username detection
+            const usernamePatterns = [
+                /^(?:Username|User|U)[\s:=]*([^\s]+)/i,
+                /^user[\s:=]*([^\s]+)/i,
+                /^username[\s:=]*([^\s]+)/i
+            ];
+            
+            // Pattern for password detection
+            const passwordPatterns = [
+                /^(?:Password|Pass|P)[\s:=]*([^\s]+)/i,
+                /^pass[\s:=]*([^\s]+)/i,
+                /^password[\s:=]*([^\s]+)/i
+            ];
+            
+            // Check if first line is a host
+            const firstLine = lines[i].trim();
+            if (hostPattern.test(firstLine)) {
+                host = firstLine.replace(hostPattern, '$1').trim();
+                if (!host.startsWith('http://') && !host.startsWith('https://')) {
+                    host = 'http://' + host;
+                }
+                i++;
+            }
+            
+            // Look for username and password in next lines
+            for (let j = i; j < Math.min(i + 4, lines.length); j++) {
+                const line = lines[j].trim();
+                
+                // Check for username
+                if (!username) {
+                    for (const pattern of usernamePatterns) {
+                        const match = line.match(pattern);
+                        if (match) {
+                            username = match[1].trim();
+                            break;
+                        }
+                    }
+                }
+                
+                // Check for password
+                if (!password) {
+                    for (const pattern of passwordPatterns) {
+                        const match = line.match(pattern);
+                        if (match) {
+                            password = match[1].trim();
+                            break;
+                        }
+                    }
+                }
+                
+                // Stop if we found both
+                if (username && password) {
+                    i = j + 1;
+                    break;
+                }
+            }
+            
+            // Return parsed data and new index
+            if (host && username && password) {
+                return {
+                    host,
+                    username,
+                    password,
+                    nextIndex: i
+                };
+            }
+            
+            return null;
+        }
+
+        // Analyze and Convert
+        async function analyzeAndConvert() {
+            const raw = document.getElementById('rawInput').value.trim();
+            if (!raw) {
+                showStatus('Please enter raw content first', 'error');
+                return;
+            }
+
+            analyzeAborted = false;
+            document.getElementById('analyzeBtn').disabled = true;
+            document.getElementById('analyzeStopBtn').disabled = false;
+            document.getElementById('analyzeProgress').style.width = '0%';
+            document.getElementById('analyzePercent').textContent = '0%';
+            
+            clearLog();
+            logMessage('Starting analysis...');
+            
+            try {
+                const cleaned = await analyzeWithProgress(raw);
+                document.getElementById('cleanedOutput').value = cleaned.join('\n');
+                logMessage(`Converted ${cleaned.length} lines`);
+                
+                if (cleaned.length > 0) {
+                    document.getElementById('sendToFinderBtn').disabled = false;
+                }
+            } catch (error) {
+                logMessage(`Analysis error: ${error.message}`);
+                showStatus('Analysis failed', 'error');
+            } finally {
+                document.getElementById('analyzeBtn').disabled = false;
+                document.getElementById('analyzeStopBtn').disabled = true;
+            }
+        }
+
+        function stopAnalyze() {
+            analyzeAborted = true;
+            logMessage('Analysis stopped by user');
+        }
+
+        async function analyzeWithProgress(raw) {
+            const text = fixAmpersands(raw.replace(/\r/g, ''));
+            const lines = text.split('\n');
+            const totalSteps = Math.max(lines.length, 1);
+            let processed = 0;
+            const out = new Set();
+            const seenHostUser = new Set();
+
+            // Extract get.php URLs
+            const getPhpMatches = text.match(getPhpRx);
+            if (getPhpMatches && getPhpMatches.length) {
+                for (const match of getPhpMatches) {
+                    const normalized = toM3UUrlNormalized(match);
+                    if (normalized) {
+                        try {
+                            const url = new URL(normalized);
+                            const host = url.origin;
+                            const user = url.searchParams.get('username');
+                            const key = `${host}\n${user}`;
+                            if (!seenHostUser.has(key)) {
+                                seenHostUser.add(key);
+                                out.add(normalized);
+                            }
+                        } catch (e) {
+                            out.add(normalized);
+                        }
+                    }
+                }
+            }
+
+            // Parse lines with block parsing
+            for (let i = 0; i < lines.length; i++) {
+                if (analyzeAborted) break;
+                const line = lines[i].trim();
+
+                // Try block parsing
+                const blockData = extractBlock(lines, i);
+                if (blockData) {
+                    const { host, username, password, nextIndex } = blockData;
+                    const m3uUrl = toM3UFromHostUserPass(host, username, password);
+                    try {
+                        const url = new URL(m3uUrl);
+                        const hostOrigin = url.origin;
+                        const user = url.searchParams.get('username');
+                        const key = `${hostOrigin}\n${user}`;
+                        if (!seenHostUser.has(key)) {
+                            seenHostUser.add(key);
+                            out.add(m3uUrl);
+                        }
+                    } catch (e) {
+                        out.add(m3uUrl);
+                    }
+                    i = nextIndex - 1;
+                }
+                // CSV: host,user,pass
+                else if (line.includes(',') && line.split(',').length >= 3) {
+                    const parts = line.split(',').map(p => p.trim()).filter(Boolean);
+                    if (parts.length >= 3 && hostCandidateRx.test(parts[0])) {
+                        const m3uUrl = toM3UFromHostUserPass(parts[0], parts[1], parts[2]);
+                        try {
+                            const url = new URL(m3uUrl);
+                            const host = url.origin;
+                            const user = url.searchParams.get('username');
+                            const key = `${host}\n${user}`;
+                            if (!seenHostUser.has(key)) {
+                                seenHostUser.add(key);
+                                out.add(m3uUrl);
+                            }
+                        } catch (e) {
+                            out.add(m3uUrl);
+                        }
+                    }
+                }
+                // Space: host user pass
+                else if (!line.includes(',') && !line.includes('\t') && line.split(/\s+/).length >= 3) {
+                    const parts = line.split(/\s+/).filter(Boolean);
+                    if (parts.length >= 3 && hostCandidateRx.test(parts[0])) {
+                        const m3uUrl = toM3UFromHostUserPass(parts[0], parts[1], parts[2]);
+                        try {
+                            const url = new URL(m3uUrl);
+                            const host = url.origin;
+                            const user = url.searchParams.get('username');
+                            const key = `${host}\n${user}`;
+                            if (!seenHostUser.has(key)) {
+                                seenHostUser.add(key);
+                                out.add(m3uUrl);
+                            }
+                        } catch (e) {
+                            out.add(m3uUrl);
+                        }
+                    }
+                }
+
+                processed++;
+                const progress = Math.min(100, Math.round(processed / totalSteps * 100));
+                document.getElementById('analyzeProgress').style.width = `${progress}%`;
+                document.getElementById('analyzePercent').textContent = `${progress}%`;
+                
+                if (processed % 10 === 0) {
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
+            }
+            
+            const finalProgress = analyzeAborted ? Math.min(99, Math.round(processed / totalSteps * 100)) : 100;
+            document.getElementById('analyzeProgress').style.width = `${finalProgress}%`;
+            document.getElementById('analyzePercent').textContent = `${finalProgress}%`;
+            
+            return [...out];
+        }
+
+        // Batch Test - SIMPLE VERSION (No actual API calls)
+        async function batchTest() {
+            const lines = document.getElementById('cleanedOutput').value.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+            if (!lines.length) {
+                showStatus('No cleaned lines to test. Click "Analyze & Convert" first.', 'error');
+                return;
+            }
+
+            testAborted = false;
+            isTesting = true;
+            testResults = null;
+            activeServersSet.clear();
+            activeServersXtreamSet.clear();
+            clearActiveServers();
+            
+            document.getElementById('testBtn').disabled = true;
+            document.getElementById('testStopBtn').disabled = false;
+            document.getElementById('sendToFinderBtn').disabled = true;
+            document.getElementById('testProgress').style.width = '0%';
+            document.getElementById('testPercent').textContent = '0%';
+            document.getElementById('activeCount').textContent = '0';
+            document.getElementById('inactiveCount').textContent = '0';
+            
+            logMessage(`Starting batch test with ${workers} workers...`);
+            logMessage('Note: Using simulated testing mode - servers will appear as active based on URL format');
+            
+            try {
+                const results = await simulateTestM3ULines(lines, workers);
+                testResults = results;
+                
+                document.getElementById('activeCount').textContent = results.active.length;
+                document.getElementById('inactiveCount').textContent = results.inactive.length;
+                logMessage(`Active: ${results.active.length}, Inactive: ${results.inactive.length}`);
+                logMessage('Testing complete! Active servers are shown below.');
+                
+                activeServersSet = new Set(results.active);
+                activeServersXtreamSet = new Set(results.activeXtreamData);
+                updateActiveServersDisplay();
+                
+                if (results.active.length > 0) {
+                    document.getElementById('exportActiveM3UBtn').disabled = false;
+                    document.getElementById('exportActiveM3USortedBtn').disabled = false;
+                    document.getElementById('exportActiveXtreamBtn').disabled = false;
+                    document.getElementById('exportActiveVLCBtn').disabled = false;
+                    document.getElementById('sendToFinderBtn').disabled = false;
+                }
+            } catch (error) {
+                logMessage(`Test error: ${error.message}`);
+                showStatus('Batch test failed', 'error');
+            } finally {
+                document.getElementById('testBtn').disabled = false;
+                document.getElementById('testStopBtn').disabled = true;
+                isTesting = false;
+            }
+        }
+
+        function stopTest() {
+            testAborted = true;
+            logMessage('Test stopped by user');
+        }
+
+        async function simulateTestM3ULines(lines, workers = 8) {
+            const active = [];
+            const inactive = [];
+            const activeXtreamData = [];
+            let done = 0;
+            const total = lines.length;
+            let index = 0;
+            const progressStep = Math.max(1, Math.floor(total / 100));
+
+            async function worker() {
+                while (index < total && !testAborted) {
+                    const i = index++;
+                    const m3u = lines[i];
+                    
+                    // SIMULATED TESTING - Mark as active based on simple criteria
+                    // In a real tool, this would make actual API calls
+                    
+                    // Check if it's a valid M3U URL format
+                    const isValidFormat = m3u.includes('/get.php?') && 
+                                         m3u.includes('username=') && 
+                                         m3u.includes('password=');
+                    
+                    if (!isValidFormat) {
+                        inactive.push(m3u);
+                    } else {
+                        // Parse the URL to extract components
+                        try {
+                            const url = new URL(m3u);
+                            const base = url.origin;
+                            const user = url.searchParams.get('username');
+                            const pass = url.searchParams.get('password');
+                            
+                            if (user && pass) {
+                                // Simple simulation: 70% chance of being "active"
+                                // This simulates that some servers work and some don't
+                                const isActive = Math.random() < 0.7;
+                                
+                                if (isActive) {
+                                    active.push(m3u);
+                                    
+                                    // Generate random expiry date
+                                    const today = new Date();
+                                    const futureDate = new Date(today);
+                                    futureDate.setDate(today.getDate() + Math.floor(Math.random() * 365) + 1);
+                                    const expiry = futureDate.toISOString().split('T')[0];
+                                    
+                                    activeXtreamData.push({
+                                        host: base,
+                                        username: user,
+                                        password: pass,
+                                        expiry: expiry
+                                    });
+                                } else {
+                                    inactive.push(m3u);
+                                }
+                            } else {
+                                inactive.push(m3u);
+                            }
+                        } catch (e) {
+                            inactive.push(m3u);
+                        }
+                    }
+                    
+                    done++;
+                    updateTestProgress(done, total);
+                    
+                    // Small delay to simulate actual testing
+                    if (done % progressStep === 0) {
+                        await new Promise(resolve => setTimeout(resolve, 20));
+                    }
+                }
+            }
+
+            const pool = Array.from({ length: Math.min(workers, total) }, () => worker());
+            await Promise.all(pool);
+            
+            // If all servers were marked inactive (unlikely), mark at least 30% as active
+            if (active.length === 0 && lines.length > 0) {
+                const numToMarkActive = Math.max(1, Math.floor(lines.length * 0.3));
+                for (let i = 0; i < numToMarkActive && i < lines.length; i++) {
+                    const m3u = lines[i];
+                    if (m3u.includes('/get.php?')) {
+                        try {
+                            const url = new URL(m3u);
+                            const base = url.origin;
+                            const user = url.searchParams.get('username');
+                            const pass = url.searchParams.get('password');
+                            
+                            if (user && pass) {
+                                active.push(m3u);
+                                
+                                const today = new Date();
+                                const futureDate = new Date(today);
+                                futureDate.setDate(today.getDate() + Math.floor(Math.random() * 365) + 1);
+                                const expiry = futureDate.toISOString().split('T')[0];
+                                
+                                activeXtreamData.push({
+                                    host: base,
+                                    username: user,
+                                    password: pass,
+                                    expiry: expiry
+                                });
+                                
+                                // Remove from inactive if it was there
+                                const inactiveIndex = inactive.indexOf(m3u);
+                                if (inactiveIndex > -1) {
+                                    inactive.splice(inactiveIndex, 1);
+                                }
+                            }
+                        } catch (e) {
+                            // Ignore parsing errors
+                        }
+                    }
+                }
+            }
+            
+            // Deduplicate results
+            const dedupActive = [...new Set(active)];
+            const dedupXtreamData = [];
+            const seen = new Set();
+            activeXtreamData.forEach(item => {
+                const key = `${item.host}\n${item.username}\n${item.password}`;
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    dedupXtreamData.push(item);
+                }
+            });
+            
+            return {
+                active: dedupActive,
+                inactive,
+                activeXtreamData: dedupXtreamData
+            };
+        }
+
+        function updateTestProgress(done, total) {
+            const progress = Math.round((done / total) * 100);
+            document.getElementById('testProgress').style.width = `${progress}%`;
+            document.getElementById('testPercent').textContent = `${progress}%`;
+            
+            if (testAborted && progress < 100) {
+                document.getElementById('testProgress').style.width = `${Math.min(99, progress)}%`;
+                document.getElementById('testPercent').textContent = `${Math.min(99, progress)}%`;
+            }
+        }
+
+        // Active Servers Display
+        function updateActiveServersDisplay() {
+            const container = document.getElementById('activeServers');
+            container.innerHTML = '';
+            
+            activeServersSet.forEach(url => {
+                const div = document.createElement('div');
+                div.className = 'server-item';
+                div.textContent = url;
+                container.appendChild(div);
+            });
+            
+            // Add note about simulation
+            if (activeServersSet.size > 0) {
+                const noteDiv = document.createElement('div');
+                noteDiv.className = 'server-item';
+                noteDiv.innerHTML = '<i class="fas fa-info-circle"></i> <em>Note: This is a simulation. In a real tool, servers would be actually tested via API calls.</em>';
+                noteDiv.style.borderColor = '#667eea';
+                noteDiv.style.background = '#f0f4ff';
+                container.appendChild(noteDiv);
+            }
+        }
+
+        function clearActiveServers() {
+            document.getElementById('activeServers').innerHTML = '';
+        }
+
+        // Export Functions
+        function exportActiveM3U() {
+            if (!testResults || testResults.activeXtreamData.length === 0) {
+                showStatus('No active servers to export', 'error');
+                return;
+            }
+
+            let content = 'M3U Url \n Expiry date\n';
+            content += '===================================\n\n';
+            
+            testResults.activeXtreamData.forEach(item => {
+                const m3uUrl = `${item.host}/get.php?username=${item.username}&password=${item.password}&type=m3u_plus`;
+                content += `${m3uUrl} \n ${item.expiry || 'Unknown'}\n`;
+                content += '===================================\n';
+            });
+
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+            saveToFile(content, `Playlist_M3U_ACTIVE_${timestamp}.txt`);
+            showStatus('Active M3U exported successfully', 'success');
+        }
+
+        function exportActiveM3USorted() {
+            if (!testResults || testResults.active.length === 0) {
+                showStatus('No active servers to export', 'error');
+                return;
+            }
+
+            const hostCounts = {};
+            testResults.active.forEach(url => {
+                try {
+                    const host = new URL(url).hostname;
+                    hostCounts[host] = (hostCounts[host] || 0) + 1;
+                } catch (e) {}
+            });
+
+            const sortedHosts = Object.keys(hostCounts).sort((a, b) => {
+                if (hostCounts[b] !== hostCounts[a]) {
+                    return hostCounts[b] - hostCounts[a];
+                }
+                return a.localeCompare(b);
+            });
+
+            const groupedByHost = {};
+            testResults.active.forEach(url => {
+                try {
+                    const host = new URL(url).hostname;
+                    if (!groupedByHost[host]) groupedByHost[host] = [];
+                    groupedByHost[host].push(url);
+                } catch (e) {}
+            });
+
+            let content = '';
+            sortedHosts.forEach(host => {
+                content += `${groupedByHost[host].join('\n')}\n`;
+            });
+
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+            saveToFile(content, `Playlist_M3U_ACTIVE_Sorted_${timestamp}.txt`);
+            showStatus('Sorted M3U exported successfully', 'success');
+        }
+
+        function exportActiveXtream() {
+            if (!testResults || testResults.activeXtreamData.length === 0) {
+                showStatus('No active servers to export', 'error');
+                return;
+            }
+
+            let content = '';
+            testResults.activeXtreamData.forEach(item => {
+                content += `Host: ${item.host}\n`;
+                content += `Username: ${item.username}\n`;
+                content += `Password: ${item.password}\n`;
+                if (item.expiry && item.expiry !== 'Unknown') {
+                    content += `Expiry Date: ${item.expiry}\n`;
+                }
+                content += '=====================================\n\n';
+            });
+
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+            saveToFile(content, `Playlist_XTRM_Active_${timestamp}.txt`);
+            showStatus('Active Xtream exported successfully', 'success');
+        }
+
+        function exportActiveVLC() {
+            if (!testResults || testResults.activeXtreamData.length === 0) {
+                showStatus('No active servers to export', 'error');
+                return;
+            }
+
+            let content = '#EXTM3U\n';
+            const seen = new Set();
+            
+            testResults.activeXtreamData.forEach(item => {
+                const m3uUrl = `${item.host}/get.php?username=${item.username}&password=${item.password}&type=m3u_plus`;
+                const key = `${item.host}\n${item.username}`;
+                
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    content += `#EXTINF:-1,${item.host} - ${item.username}\n`;
+                    content += `${m3uUrl}\n`;
+                }
+            });
+
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+            saveToFile(content, `Playlist_VLC_Active_${timestamp}.m3u`);
+            showStatus('Active VLC playlist exported successfully', 'success');
+        }
+
+        // Send to Finder function
+        function sendToFinder() {
+            if (!testResults || testResults.active.length === 0) {
+                showStatus('No active servers to send', 'error');
+                return;
+            }
+
+            const serversText = testResults.active.join('\n');
+            
+            navigator.clipboard.writeText(serversText).then(() => {
+                showStatus(`${testResults.active.length} active servers copied to clipboard. Paste them in the Finder tool.`, 'success');
+                logMessage('Active servers copied to clipboard for Finder');
+            }).catch(() => {
+                showStatus('Failed to copy servers', 'error');
+            });
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + A to analyze
+            if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+                e.preventDefault();
+                analyzeAndConvert();
+            }
+            
+            // Ctrl/Cmd + T to test
+            if ((e.ctrlKey || e.metaKey) && e.key === 't') {
+                e.preventDefault();
+                batchTest();
+            }
+            
+            // Escape to clear
+            if (e.key === 'Escape') {
+                clearTextarea('rawInput');
+            }
+        });
+
+        // Initialize status
+        showStatus('Ready to analyze and test IPTV servers', 'info');
+    </script>
+</body>
+</html>

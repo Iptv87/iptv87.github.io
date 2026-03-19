@@ -1,0 +1,2586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<nav>
+    <a href="Cleaner 3.html">Cleaner</a>
+    <a href="Fetcher 2.html">Fetcher</a>
+    <a href="Finder 7.html">Finder</a>
+    
+</nav>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple IPTV Finder - Enhanced</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            transition: background 0.5s ease;
+        }
+
+        /* Theme Classes - Applied to body for full background */
+        body.theme-default {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body.theme-ocean {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }
+
+        body.theme-forest {
+            background: linear-gradient(135deg, #0f9b0f 0%, #2E8B57 100%);
+        }
+
+        body.theme-dark {
+            background: linear-gradient(135deg, #2c3e50 0%, #4a235a 100%);
+        }
+
+        body.theme-sunset {
+            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+        }
+
+        body.theme-royal {
+            background: linear-gradient(135deg, #8A2387 0%, #F27121 100%);
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        /* Theme Selector */
+        .theme-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            max-width: 300px;
+        }
+
+        .theme-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .theme-btn.active {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            border: 3px solid white;
+        }
+
+        .theme-default-btn { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .theme-ocean-btn { background: linear-gradient(135deg, #1e3c72, #2a5298); }
+        .theme-forest-btn { background: linear-gradient(135deg, #0f9b0f, #2E8B57); }
+        .theme-dark-btn { background: linear-gradient(135deg, #2c3e50, #4a235a); }
+        .theme-sunset-btn { background: linear-gradient(135deg, #ff7e5f, #feb47b); }
+        .theme-royal-btn { background: linear-gradient(135deg, #8A2387, #F27121); }
+
+        /* Input Section */
+        .input-section {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .input-section:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .section-label {
+            display: block;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        /* MODIFIED: Inline input row with increased width */
+        .input-row-inline {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            align-items: stretch;
+        }
+
+        .input-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .servers-input {
+            flex: 3;
+        }
+
+        .keywords-input {
+            flex: 1;
+        }
+
+        .input-group textarea,
+        .input-group input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+            font-family: inherit;
+            min-height: 120px;
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .input-group textarea:focus,
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Search Options Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        .option-group select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: white;
+        }
+
+        /* Performance Options - Collapsible */
+        .performance-toggle {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid #667eea;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-top: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .performance-toggle:hover {
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        .performance-toggle .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .performance-toggle.collapsed .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .performance-options {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid #667eea;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 5px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        .performance-options.collapsed {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            border-width: 0;
+            margin-top: 0;
+            opacity: 0;
+        }
+
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            align-items: center;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slider-label {
+            min-width: 120px;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+
+        .slider-value {
+            min-width: 40px;
+            text-align: center;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        /* Buttons */
+        .buttons-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 46px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a67d8, #6b46c1);
+        }
+
+        .btn-secondary {
+            background: #edf2f7;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            border-color: #cbd5e0;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #38a169, #2f855a);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #dd6b20, #c05621);
+        }
+
+        .btn-vlc {
+            background: linear-gradient(135deg, #9f7aea, #805ad5);
+            color: white;
+        }
+
+        .btn-vlc:hover {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565, #c53030);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #e53e3e, #b83232);
+        }
+
+        .btn-background {
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+            color: white;
+        }
+
+        .btn-background:hover {
+            background: linear-gradient(135deg, #3182ce, #2c5282);
+        }
+
+        /* NEW: Skip Button Style */
+        .btn-skip {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+            color: white;
+        }
+
+        .btn-skip:hover {
+            background: linear-gradient(135deg, #dd6b20, #c05621);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin: 20px 0;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        /* NEW: Current Server Indicator */
+        .current-server-indicator {
+            display: none;
+            margin: 10px 0;
+            padding: 10px 15px;
+            background: rgba(72, 187, 120, 0.1);
+            border: 2px solid #48bb78;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #276749;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .current-server-text {
+            flex: 1;
+            word-break: break-all;
+        }
+
+        /* NEW: Skip Button Container */
+        .skip-container {
+            display: none;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        /* Speed Indicators */
+        .speed-indicators {
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+            border: 2px solid #667eea;
+        }
+
+        .speed-box {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .speed-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .speed-label {
+            font-size: 0.85rem;
+            color: #718096;
+            font-weight: 600;
+        }
+
+        /* Status Message */
+        .status-message {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 10px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background: rgba(72, 187, 120, 0.1);
+            border: 2px solid #48bb78;
+            color: #276749;
+        }
+
+        .status-error {
+            background: rgba(245, 101, 101, 0.1);
+            border: 2px solid #f56565;
+            color: #c53030;
+        }
+
+        .status-loading {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid #667eea;
+            color: #4a5568;
+        }
+
+        /* Results Count */
+        .results-count {
+            display: none;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .count-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            text-align: center;
+        }
+
+        .count-box {
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .count-live {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid #667eea;
+        }
+
+        .count-vod {
+            background: rgba(72, 187, 120, 0.1);
+            border: 2px solid #48bb78;
+        }
+
+        .count-series {
+            background: rgba(237, 137, 54, 0.1);
+            border: 2px solid #ed8936;
+        }
+
+        .count-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .count-label {
+            font-size: 0.9rem;
+            color: #718096;
+            font-weight: 600;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: white;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.3s ease;
+            z-index: 10;
+        }
+
+        th:hover {
+            background: linear-gradient(135deg, #5a67d8, #6b46c1);
+        }
+
+        th.sortable {
+            position: relative;
+            padding-right: 30px;
+        }
+
+        th.sortable::after {
+            content: '↕';
+            position: absolute;
+            right: 10px;
+            opacity: 0.7;
+        }
+
+        th.sort-asc::after {
+            content: '↑';
+            opacity: 1;
+        }
+
+        th.sort-desc::after {
+            content: '↓';
+            opacity: 1;
+        }
+
+        th:first-child {
+            border-top-left-radius: 8px;
+        }
+
+        th:last-child {
+            border-top-right-radius: 8px;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: top;
+        }
+
+        tr:hover {
+            background: #f7fafc;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .server-cell {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #4a5568;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .category-cell {
+            font-weight: 600;
+            color: #4a5568;
+            max-width: 250px;
+        }
+
+        .type-cell {
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .type-live {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .type-vod {
+            background: rgba(72, 187, 120, 0.1);
+            color: #38a169;
+        }
+
+        .type-series {
+            background: rgba(237, 137, 54, 0.1);
+            color: #dd6b20;
+        }
+
+        .count-cell {
+            text-align: center;
+            font-weight: 700;
+            color: #4a5568;
+        }
+
+        .expiry-cell {
+            font-family: 'Courier New', monospace;
+            color: #718096;
+            max-width: 150px;
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .btn-small:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Checkbox for selection */
+        .selection-cell {
+            text-align: center;
+            width: 50px;
+        }
+
+        .select-all-checkbox {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+        }
+
+        .item-checkbox {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            vertical-align: middle;
+        }
+
+        /* NEW: Checked server row style */
+        .checked-server {
+            background: rgba(72, 187, 120, 0.1) !important;
+            border-left: 4px solid #48bb78;
+        }
+
+        .checked-server:hover {
+            background: rgba(72, 187, 120, 0.2) !important;
+        }
+
+        .checked-server .server-cell {
+            color: #276749;
+            font-weight: 600;
+        }
+
+        /* Channels List */
+        .channels-container {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px;
+            background: #f7fafc;
+        }
+
+        .channel-item {
+            padding: 8px;
+            margin: 4px 0;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .channel-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .channel-number {
+            width: 24px;
+            height: 24px;
+            background: #e2e8f0;
+            color: #4a5568;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .channel-name {
+            flex: 1;
+            font-size: 0.9rem;
+            color: #4a5568;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .channel-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #a0aec0;
+            grid-column: 1 / -1;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+        }
+
+        /* Scrollbar Styling */
+        .channels-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .channels-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .channels-container::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 3px;
+        }
+
+        .channels-container::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .input-row-inline {
+                flex-direction: column;
+            }
+            
+            .servers-input,
+            .keywords-input {
+                flex: 1;
+            }
+            
+            .theme-selector {
+                position: relative;
+                top: 0;
+                right: 0;
+                justify-content: center;
+                max-width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .performance-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .speed-indicators {
+                grid-template-columns: 1fr;
+            }
+            
+            .count-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .buttons-row {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .export-buttons {
+                flex-direction: column;
+            }
+        }
+
+<style>
+nav {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+nav a {
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    transition: all 0.3s;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0,123,255,0.2);
+}
+
+nav a:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+}
+
+nav a:active {
+    transform: scale(1);
+}
+</style>
+<style>
+nav {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+nav a {
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    transition: all 0.3s;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0,123,255,0.2);
+}
+
+nav a:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+}
+
+nav a:active {
+    transform: scale(1);
+}
+</style>
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="theme-default">
+    <div class="container">
+        <!-- Theme Selector -->
+        <div class="theme-selector">
+            <div class="theme-btn theme-default-btn active" data-theme="theme-default" title="Default Theme"></div>
+            <div class="theme-btn theme-ocean-btn" data-theme="theme-ocean" title="Ocean Blue"></div>
+            <div class="theme-btn theme-forest-btn" data-theme="theme-forest" title="Forest Green"></div>
+            <div class="theme-btn theme-dark-btn" data-theme="theme-dark" title="Dark Purple"></div>
+            <div class="theme-btn theme-sunset-btn" data-theme="theme-sunset" title="Sunset Orange"></div>
+            <div class="theme-btn theme-royal-btn" data-theme="theme-royal" title="Royal Purple"></div>
+        </div>
+
+        <h1>🚀 Fast IPTV Finder</h1>
+        <p class="subtitle">Enhanced search with background processing and concurrent requests</p>
+
+        <!-- Input Section -->
+        <div class="input-section">
+            <div class="input-row-inline">
+                <div class="input-group servers-input">
+                    <label class="section-label">Servers List (one per line)</label>
+                    <textarea id="serversInput" placeholder="Example formats:
+http://server.com/get.php?username=user&password=pass&type=m3u_plus
+server.com user pass
+server.com,user,pass"></textarea>
+                </div>
+                <div class="input-group keywords-input">
+                    <label class="section-label">Keywords to Search</label>
+                    <input type="text" id="keywordsInput" placeholder="bein, sports, arabic, news">
+                </div>
+            </div>
+
+            <!-- NEW: Current Server Indicator -->
+            <div class="current-server-indicator" id="currentServerIndicator">
+                <div class="current-server-text">
+                    <i class="fas fa-server"></i> 
+                    <span id="currentServerText">No server currently being checked</span>
+                </div>
+                <div id="currentServerStatus">
+                    <span class="loading"></span>
+                </div>
+            </div>
+
+            <!-- NEW: Skip Button -->
+            <div class="skip-container" id="skipContainer">
+                <button class="btn btn-skip" onclick="skipCurrentServer()">
+                    <i class="fas fa-forward"></i> Skip This Server & Move to Next
+                </button>
+            </div>
+
+            <!-- Search Options -->
+            <div class="options-grid">
+                <div class="option-group">
+                    <label class="option-label">Search Mode</label>
+                    <select id="searchMode">
+                        <option value="categories">Search in Categories</option>
+                        <option value="channels">Search in Channels</option>
+                    </select>
+                </div>
+                
+                <div class="option-group">
+                    <label class="option-label">Content Type</label>
+                    <select id="contentType">
+                        <option value="live">Live Only</option>
+                        <option value="vod">VOD Only</option>
+                        <option value="live_vod">Live + VOD</option>
+                        <option value="all">Live + VOD + Series</option>
+                    </select>
+                </div>
+                
+                <div class="option-group">
+                    <label class="option-label">Keyword Logic</label>
+                    <select id="keywordLogic">
+                        <option value="any">ANY Keyword (OR)</option>
+                        <option value="all">ALL Keywords (AND)</option>
+                    </select>
+                </div>
+                
+                <div class="option-group">
+                    <label class="option-label">Match Type</label>
+                    <select id="matchType">
+                        <option value="contains">Contains (Fuzzy)</option>
+                        <option value="regex">Regex</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Performance Options - Collapsible (Now hidden by default) -->
+            <div class="performance-toggle collapsed" id="performanceToggle">
+                <span class="section-label">Performance Settings</span>
+                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+            </div>
+
+            <div class="performance-options collapsed" id="performanceOptions">
+                <div class="performance-grid">
+                    <div class="slider-container">
+                        <span class="slider-label">Concurrent Requests:</span>
+                        <input type="range" id="concurrentRequests" min="1" max="20" value="5">
+                        <span class="slider-value" id="concurrentValue">5</span>
+                    </div>
+                    <div class="slider-container">
+                        <span class="slider-label">Timeout (seconds):</span>
+                        <input type="range" id="requestTimeout" min="5" max="30" value="15">
+                        <span class="slider-value" id="timeoutValue">15s</span>
+                    </div>
+                    <div class="slider-container">
+                        <span class="slider-label">Retry Attempts:</span>
+                        <input type="range" id="retryAttempts" min="0" max="3" value="1">
+                        <span class="slider-value" id="retryValue">1</span>
+                    </div>
+                </div>
+                <div class="performance-grid" style="margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="backgroundProcessing" checked>
+                        <span>Run in background</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="cacheResults" checked>
+                        <span>Cache results</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="fastMode">
+                        <span>Fast mode (skip slow servers)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="buttons-row">
+                <button class="btn btn-primary" onclick="startSearch()">
+                    <i class="fas fa-search"></i> Start Search
+                </button>
+                <button class="btn btn-background" onclick="startBackgroundSearch()">
+                    <i class="fas fa-play-circle"></i> Start in Background
+                </button>
+                <button class="btn btn-secondary" onclick="pasteServers()">
+                    <i class="fas fa-paste"></i> Paste Servers
+                </button>
+                <button class="btn btn-secondary" onclick="clearAll()">
+                    <i class="fas fa-trash"></i> Clear All
+                </button>
+            </div>
+        </div>
+
+        <!-- Speed Indicators -->
+        <div class="speed-indicators" id="speedIndicators">
+            <div class="speed-box">
+                <div class="speed-value" id="serversPerMin">0</div>
+                <div class="speed-label">Servers/Min</div>
+            </div>
+            <div class="speed-box">
+                <div class="speed-value" id="avgResponseTime">0ms</div>
+                <div class="speed-label">Avg Response</div>
+            </div>
+            <div class="speed-box">
+                <div class="speed-value" id="successRate">0%</div>
+                <div class="speed-label">Success Rate</div>
+            </div>
+        </div>
+
+        <!-- Status Message -->
+        <div id="statusMessage" class="status-message">
+            <i class="fas fa-info-circle"></i>
+            <span id="statusText">Ready to search. Enter servers and keywords.</span>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text">
+                <span id="progressCurrent">0</span> / <span id="progressTotal">0</span>
+                <span id="progressPercent">0%</span>
+            </div>
+        </div>
+
+        <!-- Results Count -->
+        <div class="results-count" id="resultsCount">
+            <div class="count-grid">
+                <div class="count-box count-live">
+                    <div class="count-number" id="liveCount">0</div>
+                    <div class="count-label">Live Channels</div>
+                </div>
+                <div class="count-box count-vod">
+                    <div class="count-number" id="vodCount">0</div>
+                    <div class="count-label">VOD Items</div>
+                </div>
+                <div class="count-box count-series">
+                    <div class="count-number" id="seriesCount">0</div>
+                    <div class="count-label">Series Items</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <div class="results-header">
+                <h2 class="section-label">Search Results</h2>
+                <div class="export-buttons" id="exportButtons" style="display: none;">
+                    <button class="btn btn-success" onclick="exportSelectedM3U()">
+                        <i class="fas fa-download"></i> Export Selected M3U
+                    </button>
+                    <button class="btn btn-warning" onclick="exportSelectedXtream()">
+                        <i class="fas fa-key"></i> Export Selected Xtream
+                    </button>
+                    <button class="btn btn-vlc" onclick="exportSelectedVLC()">
+                        <i class="fas fa-play-circle"></i> Export Selected VLC
+                    </button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th class="selection-cell">
+                                <input type="checkbox" id="selectAll" class="select-all-checkbox" title="Select/Deselect All">
+                            </th>
+                            <th>Server</th>
+                            <th>Category / Channel</th>
+                            <th class="sortable" data-sort="type">Type</th>
+                            <th class="sortable" data-sort="items">Items</th>
+                            <th class="sortable" data-sort="expiry">Expiry</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody">
+                        <!-- Results will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // MAIN PERFORMANCE FIXES:
+        // 1. Use requestAnimationFrame for UI updates
+        // 2. Implement virtual scrolling for large datasets
+        // 3. Use web workers for background processing
+        // 4. Optimize DOM operations
+        // 5. Implement debouncing for frequent updates
+
+        class IPTVFinder {
+            constructor() {
+                this.state = {
+                    servers: [],
+                    keywords: [],
+                    results: [],
+                    running: false,
+                    abortController: null,
+                    totalServers: 0,
+                    currentServer: 0,
+                    matchedItems: { live: 0, vod: 0, series: 0 },
+                    selectedItems: new Set(),
+                    sortColumn: null,
+                    sortDirection: 'asc',
+                    performanceStats: {
+                        startTime: null,
+                        serversProcessed: 0,
+                        successfulRequests: 0,
+                        failedRequests: 0,
+                        responseTimes: []
+                    },
+                    currentProcessingServer: null,
+                    skipCurrentServerFlag: false,
+                    worker: null
+                };
+                
+                this.batchSize = 5;
+                this.renderQueue = [];
+                this.isRendering = false;
+                this.lastRenderTime = 0;
+                this.renderInterval = 100; // ms between renders
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupThemeSwitcher();
+                this.setupPerformancePanel();
+                this.setupSliders();
+                this.setupSorting();
+                this.setupKeyboardShortcuts();
+                
+                // Initialize performance panel as collapsed
+                document.getElementById('performanceToggle').classList.add('collapsed');
+                document.getElementById('performanceOptions').classList.add('collapsed');
+                
+                this.showStatus('Ready to search. Enter servers and keywords.', 'info');
+            }
+            
+            setupThemeSwitcher() {
+                document.querySelectorAll('.theme-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const theme = btn.getAttribute('data-theme');
+                        document.body.className = theme;
+                        document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    });
+                });
+            }
+            
+            setupPerformancePanel() {
+                const performanceToggle = document.getElementById('performanceToggle');
+                const performanceOptions = document.getElementById('performanceOptions');
+                
+                performanceToggle.addEventListener('click', () => {
+                    performanceToggle.classList.toggle('collapsed');
+                    performanceOptions.classList.toggle('collapsed');
+                });
+            }
+            
+            setupSliders() {
+                const concurrentSlider = document.getElementById('concurrentRequests');
+                const timeoutSlider = document.getElementById('requestTimeout');
+                const retrySlider = document.getElementById('retryAttempts');
+                
+                concurrentSlider.addEventListener('input', () => {
+                    document.getElementById('concurrentValue').textContent = concurrentSlider.value;
+                });
+                
+                timeoutSlider.addEventListener('input', () => {
+                    document.getElementById('timeoutValue').textContent = timeoutSlider.value + 's';
+                });
+                
+                retrySlider.addEventListener('input', () => {
+                    document.getElementById('retryValue').textContent = retrySlider.value;
+                });
+            }
+            
+            setupSorting() {
+                document.querySelectorAll('th[data-sort]').forEach(th => {
+                    th.addEventListener('click', () => {
+                        const column = th.dataset.sort;
+                        
+                        if (this.state.sortColumn === column) {
+                            this.state.sortDirection = this.state.sortDirection === 'asc' ? 'desc' : 'asc';
+                        } else {
+                            this.state.sortColumn = column;
+                            this.state.sortDirection = 'asc';
+                        }
+                        
+                        this.renderResults();
+                    });
+                });
+            }
+            
+            setupKeyboardShortcuts() {
+                document.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                        e.preventDefault();
+                        this.startSearch();
+                    }
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+                        e.preventDefault();
+                        this.startBackgroundSearch();
+                    }
+                    if (e.key === 'Escape') {
+                        this.clearAll();
+                    }
+                    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                        e.preventDefault();
+                        this.skipCurrentServer();
+                    }
+                });
+            }
+            
+            showCurrentServer(serverLine) {
+                const indicator = document.getElementById('currentServerIndicator');
+                const serverText = document.getElementById('currentServerText');
+                const skipContainer = document.getElementById('skipContainer');
+                
+                if (serverLine) {
+                    let displayText = serverLine;
+                    if (displayText.length > 80) {
+                        displayText = displayText.substring(0, 77) + '...';
+                    }
+                    
+                    serverText.textContent = `Checking: ${displayText}`;
+                    indicator.style.display = 'flex';
+                    skipContainer.style.display = 'block';
+                } else {
+                    indicator.style.display = 'none';
+                    skipContainer.style.display = 'none';
+                }
+            }
+            
+            skipCurrentServer() {
+                if (this.state.running && this.state.currentProcessingServer) {
+                    this.state.skipCurrentServerFlag = true;
+                    this.showStatus('Skipping current server...', 'info');
+                    
+                    const serverText = document.getElementById('currentServerText');
+                    serverText.innerHTML = `<i class="fas fa-forward"></i> Skipping: ${serverText.textContent.replace('Checking: ', '')}`;
+                    
+                    const indicator = document.getElementById('currentServerIndicator');
+                    indicator.style.background = 'rgba(237, 137, 54, 0.1)';
+                    indicator.style.borderColor = '#ed8936';
+                }
+            }
+            
+            async pasteServers() {
+                try {
+                    const text = await navigator.clipboard.readText();
+                    document.getElementById('serversInput').value = text;
+                    this.showStatus('Servers pasted from clipboard', 'success');
+                } catch (err) {
+                    this.showStatus('Failed to paste from clipboard', 'error');
+                }
+            }
+            
+            showStatus(message, type = 'info') {
+                requestAnimationFrame(() => {
+                    const statusEl = document.getElementById('statusMessage');
+                    const textEl = document.getElementById('statusText');
+                    
+                    statusEl.className = `status-message status-${type}`;
+                    textEl.textContent = message;
+                    statusEl.style.display = 'flex';
+                    
+                    if (type === 'success') {
+                        setTimeout(() => {
+                            statusEl.style.display = 'none';
+                        }, 3000);
+                    }
+                });
+            }
+            
+            updateProgress(current, total, percent) {
+                requestAnimationFrame(() => {
+                    document.getElementById('progressFill').style.width = `${percent}%`;
+                    document.getElementById('progressCurrent').textContent = current;
+                    document.getElementById('progressTotal').textContent = total;
+                    document.getElementById('progressPercent').textContent = `${percent}%`;
+                    
+                    if (current % 5 === 0 || current === total) {
+                        this.updatePerformanceStats();
+                    }
+                    
+                    this.updateResultsCounts();
+                });
+            }
+            
+            updatePerformanceStats() {
+                if (!this.state.performanceStats.startTime) return;
+                
+                const now = Date.now();
+                const elapsed = (now - this.state.performanceStats.startTime) / 1000 / 60;
+                const serversProcessed = this.state.currentServer;
+                
+                if (elapsed > 0) {
+                    const serversPerMin = Math.round(serversProcessed / elapsed);
+                    document.getElementById('serversPerMin').textContent = serversPerMin;
+                }
+                
+                if (this.state.performanceStats.responseTimes.length > 0) {
+                    const avgTime = this.state.performanceStats.responseTimes.reduce((a, b) => a + b, 0) / 
+                                  this.state.performanceStats.responseTimes.length;
+                    document.getElementById('avgResponseTime').textContent = `${Math.round(avgTime)}ms`;
+                }
+                
+                const totalRequests = this.state.performanceStats.successfulRequests + 
+                                     this.state.performanceStats.failedRequests;
+                if (totalRequests > 0) {
+                    const successRate = Math.round(
+                        (this.state.performanceStats.successfulRequests / totalRequests) * 100
+                    );
+                    document.getElementById('successRate').textContent = `${successRate}%`;
+                }
+                
+                document.getElementById('speedIndicators').style.display = 'grid';
+            }
+            
+            updateResultsCounts() {
+                requestAnimationFrame(() => {
+                    document.getElementById('liveCount').textContent = this.state.matchedItems.live;
+                    document.getElementById('vodCount').textContent = this.state.matchedItems.vod;
+                    document.getElementById('seriesCount').textContent = this.state.matchedItems.series;
+                    
+                    if (this.state.matchedItems.live > 0 || this.state.matchedItems.vod > 0 || this.state.matchedItems.series > 0) {
+                        document.getElementById('resultsCount').style.display = 'block';
+                    }
+                });
+            }
+            
+            updateExportButtons() {
+                const hasSelected = this.state.selectedItems.size > 0;
+                document.getElementById('exportButtons').style.display = hasSelected ? 'flex' : 'none';
+            }
+            
+            extractSingleM3U(line) {
+                const text = String(line || '').replace(/&/g, '&');
+                const getPhpRx = /https?:\/\/[^\s"'<>]+get\.php\?[^ \n\r"'<>]*/ig;
+                const m = text.match(getPhpRx);
+                
+                if (m && m.length) {
+                    try {
+                        const url = new URL(m[0]);
+                        if (url.pathname.includes('get.php')) {
+                            const user = url.searchParams.get('username');
+                            const pass = url.searchParams.get('password');
+                            if (user && pass) {
+                                return `${url.origin}/get.php?username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}&type=m3u_plus`;
+                            }
+                        }
+                    } catch (e) {}
+                }
+                
+                const s = text.trim();
+                if (/,/.test(s)) {
+                    const parts = s.split(',').map(x => x.trim());
+                    if (parts.length >= 3 && this.isValidHost(parts[0])) {
+                        return this.toM3UFromHostUserPass(parts[0], parts[1], parts[2]);
+                    }
+                } else {
+                    const parts = s.split(/\s+/).filter(Boolean);
+                    if (parts.length >= 3 && this.isValidHost(parts[0])) {
+                        return this.toM3UFromHostUserPass(parts[0], parts[1], parts[2]);
+                    }
+                }
+                
+                return null;
+            }
+            
+            isValidHost(host) {
+                const hostPattern = /^(?:(?:https?:\/\/)?(?:\d{1,3}(?:\.\d{1,3}){3}|[a-z0-9\-]+(?:\.[a-z0-9\-]+)+)(?::\d{1,5})?)\/?$/i;
+                return hostPattern.test(host);
+            }
+            
+            toM3UFromHostUserPass(host, user, pass) {
+                if (!/^https?:\/\//i.test(host)) host = 'http://' + host;
+                return `${host.replace(/\/+$/, '')}/get.php?username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}&type=m3u_plus`;
+            }
+            
+            m3uToXtreamApi(m3uUrl) {
+                try {
+                    const url = new URL(m3uUrl);
+                    const base = url.origin;
+                    const user = url.searchParams.get('username');
+                    const pass = url.searchParams.get('password');
+                    if (!user || !pass) return null;
+                    return { base, user, pass, apiBase: `${base}/player_api.php?username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}` };
+                } catch {
+                    return null;
+                }
+            }
+            
+            async fetchWithRetry(url, timeout = 10000, retries = 1) {
+                for (let i = 0; i <= retries; i++) {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), timeout);
+                    
+                    try {
+                        const startTime = Date.now();
+                        const response = await fetch(url, { 
+                            signal: controller.signal,
+                            mode: 'cors',
+                            credentials: 'omit'
+                        });
+                        const endTime = Date.now();
+                        
+                        clearTimeout(timeoutId);
+                        
+                        if (!response.ok) {
+                            if (i === retries) throw new Error(`HTTP ${response.status}`);
+                            continue;
+                        }
+                        
+                        this.state.performanceStats.responseTimes.push(endTime - startTime);
+                        this.state.performanceStats.successfulRequests++;
+                        return response;
+                    } catch (error) {
+                        clearTimeout(timeoutId);
+                        if (i === retries) {
+                            this.state.performanceStats.failedRequests++;
+                            throw error;
+                        }
+                        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+                    }
+                }
+            }
+            
+            matchText(text, keywords, logic, matchType) {
+                const t = (text || '').toLowerCase();
+                if (!keywords.length) return false;
+                
+                if (matchType === 'regex') {
+                    const regexes = [];
+                    for (const k of keywords) {
+                        try {
+                            regexes.push(new RegExp(k, 'i'));
+                        } catch (e) {
+                            console.error(`Invalid regex: ${k}`);
+                        }
+                    }
+                    if (!regexes.length) return false;
+                    return logic === 'any' ? regexes.some(rx => rx.test(text)) : regexes.every(rx => rx.test(text));
+                } else {
+                    const searchTerms = keywords.map(k => k.toLowerCase());
+                    return logic === 'any' ? 
+                        searchTerms.some(term => t.includes(term)) : 
+                        searchTerms.every(term => t.includes(term));
+                }
+            }
+            
+            async processSingleServer(serverLine) {
+                const startTime = Date.now();
+                const m3uUrl = this.extractSingleM3U(serverLine);
+                if (!m3uUrl) {
+                    return null;
+                }
+                
+                const xt = this.m3uToXtreamApi(m3uUrl);
+                if (!xt) {
+                    return null;
+                }
+
+                try {
+                    const timeout = parseInt(document.getElementById('requestTimeout').value) * 1000;
+                    const retries = parseInt(document.getElementById('retryAttempts').value);
+                    const fastMode = document.getElementById('fastMode').checked;
+                    
+                    if (fastMode) {
+                        try {
+                            const quickTest = await fetch(`${xt.base}/`, { 
+                                signal: AbortSignal.timeout(3000),
+                                mode: 'no-cors'
+                            });
+                        } catch (e) {
+                            return null;
+                        }
+                    }
+                    
+                    const result = await this.processServerInternal(xt, this.state.keywords, timeout, retries);
+                    const endTime = Date.now();
+                    this.state.performanceStats.responseTimes.push(endTime - startTime);
+                    this.state.performanceStats.successfulRequests++;
+                    return result;
+                } catch (error) {
+                    const endTime = Date.now();
+                    this.state.performanceStats.responseTimes.push(endTime - startTime);
+                    this.state.performanceStats.failedRequests++;
+                    return null;
+                }
+            }
+            
+            async processServerInternal(xt, keywords, timeout, retries) {
+                const searchMode = document.getElementById('searchMode').value;
+                const contentType = document.getElementById('contentType').value;
+                const keywordLogic = document.getElementById('keywordLogic').value;
+                const matchType = document.getElementById('matchType').value;
+                
+                const result = {
+                    server: xt.base,
+                    user: xt.user,
+                    pass: xt.pass,
+                    matches: [],
+                    expiry: 'Unknown',
+                    serverId: `${xt.base}_${xt.user}_${xt.pass}`
+                };
+
+                try {
+                    const infoResponse = await this.fetchWithRetry(xt.apiBase, timeout, retries);
+                    const info = await infoResponse.json();
+                    
+                    if (info.user_info?.exp_date) {
+                        const exp = info.user_info.exp_date;
+                        if (exp && exp !== "0" && exp !== 0) {
+                            const n = Number(exp);
+                            if (!isNaN(n) && n > 100000) {
+                                const d = new Date(n * 1000);
+                                result.expiry = d.toLocaleDateString();
+                            }
+                        }
+                    }
+
+                    const typesToCheck = [];
+                    if (['live', 'live_vod', 'all'].includes(contentType)) typesToCheck.push('live');
+                    if (['vod', 'live_vod', 'all'].includes(contentType)) typesToCheck.push('vod');
+                    if (['all'].includes(contentType)) typesToCheck.push('series');
+
+                    for (const type of typesToCheck) {
+                        const action = type === 'live' ? 'get_live_streams' : 
+                                     type === 'vod' ? 'get_vod_streams' : 'get_series';
+                        const catAction = type === 'live' ? 'get_live_categories' : 
+                                        type === 'vod' ? 'get_vod_categories' : 'get_series_categories';
+                        
+                        const [itemsResponse, categoriesResponse] = await Promise.all([
+                            this.fetchWithRetry(`${xt.apiBase}&action=${action}`, timeout, retries),
+                            this.fetchWithRetry(`${xt.apiBase}&action=${catAction}`, timeout, retries)
+                        ]);
+                        
+                        const [items, categories] = await Promise.all([
+                            itemsResponse.json(),
+                            categoriesResponse.json()
+                        ]);
+
+                        const categoryMap = {};
+                        categories.forEach(cat => {
+                            categoryMap[cat.category_id] = cat.category_name || 'Unnamed';
+                        });
+
+                        if (searchMode === 'channels') {
+                            for (const item of items) {
+                                const name = item.name || item.title || '';
+                                const catName = categoryMap[item.category_id] || 'Unnamed';
+                                const combined = `${name} ${catName}`;
+                                
+                                if (this.matchText(combined, keywords, keywordLogic, matchType)) {
+                                    const streamId = item.stream_id || item.series_id || item.id;
+                                    const pathType = type === 'vod' ? 'movie' : type === 'series' ? 'series' : 'live';
+                                    const ext = item.container_extension || (type === 'series' ? 'mkv' : type === 'vod' ? 'mp4' : 'ts');
+                                    
+                                    const itemId = `${result.serverId}_${type}_${name}`;
+                                    result.matches.push({
+                                        type,
+                                        label: name,
+                                        category: catName,
+                                        count: 1,
+                                        items: [{
+                                            name,
+                                            category: catName,
+                                            url: `${xt.base}/${pathType}/${xt.user}/${xt.pass}/${streamId}.${ext}`,
+                                            ext
+                                        }],
+                                        itemId: itemId,
+                                        expiry: result.expiry
+                                    });
+                                    
+                                    this.state.matchedItems[type]++;
+                                }
+                            }
+                        } else {
+                            const itemsByCategory = {};
+                            items.forEach(item => {
+                                const catId = item.category_id || '0';
+                                if (!itemsByCategory[catId]) {
+                                    itemsByCategory[catId] = [];
+                                }
+                                itemsByCategory[catId].push(item);
+                            });
+
+                            for (const [catId, catItems] of Object.entries(itemsByCategory)) {
+                                const catName = categoryMap[catId] || 'Unnamed';
+                                
+                                if (this.matchText(catName, keywords, keywordLogic, matchType)) {
+                                    const categoryItems = catItems.map(item => {
+                                        const name = item.name || item.title || '';
+                                        const streamId = item.stream_id || item.series_id || item.id;
+                                        const pathType = type === 'vod' ? 'movie' : type === 'series' ? 'series' : 'live';
+                                        const ext = item.container_extension || (type === 'series' ? 'mkv' : type === 'vod' ? 'mp4' : 'ts');
+                                        
+                                        return {
+                                            name,
+                                            category: catName,
+                                            url: `${xt.base}/${pathType}/${xt.user}/${xt.pass}/${streamId}.${ext}`,
+                                            ext
+                                        };
+                                    });
+
+                                    const itemId = `${result.serverId}_${type}_${catName}`;
+                                    result.matches.push({
+                                        type,
+                                        label: catName,
+                                        category: catName,
+                                        count: categoryItems.length,
+                                        items: categoryItems,
+                                        itemId: itemId,
+                                        expiry: result.expiry
+                                    });
+                                    
+                                    this.state.matchedItems[type] += categoryItems.length;
+                                }
+                            }
+                        }
+                    }
+
+                } catch (error) {
+                    throw error;
+                }
+
+                return result;
+            }
+            
+            async startSearch() {
+                if (this.state.running) {
+                    this.stopSearch();
+                    return;
+                }
+
+                await this.performSearch(false);
+            }
+            
+            async startBackgroundSearch() {
+                if (this.state.running) {
+                    this.stopSearch();
+                    return;
+                }
+
+                await this.performSearch(true);
+            }
+            
+            async performSearch(backgroundMode = false) {
+                const serversRaw = document.getElementById('serversInput').value.trim();
+                const keywordsRaw = document.getElementById('keywordsInput').value.trim();
+                
+                if (!serversRaw || !keywordsRaw) {
+                    this.showStatus('Please enter both servers and keywords', 'error');
+                    return;
+                }
+
+                // Reset state
+                this.state = {
+                    servers: serversRaw.split(/\r?\n/).map(s => s.trim()).filter(Boolean),
+                    keywords: keywordsRaw.split(/[\n,]+/).map(k => k.trim()).filter(Boolean),
+                    results: [],
+                    running: true,
+                    abortController: new AbortController(),
+                    totalServers: 0,
+                    currentServer: 0,
+                    matchedItems: { live: 0, vod: 0, series: 0 },
+                    selectedItems: new Set(),
+                    sortColumn: null,
+                    sortDirection: 'asc',
+                    performanceStats: {
+                        startTime: Date.now(),
+                        serversProcessed: 0,
+                        successfulRequests: 0,
+                        failedRequests: 0,
+                        responseTimes: []
+                    },
+                    currentProcessingServer: null,
+                    skipCurrentServerFlag: false
+                };
+
+                // Show progress
+                document.getElementById('progressContainer').style.display = 'block';
+                document.getElementById('resultsCount').style.display = 'none';
+                document.getElementById('resultsSection').style.display = 'none';
+                document.getElementById('exportButtons').style.display = 'none';
+                document.getElementById('speedIndicators').style.display = 'grid';
+                
+                // Clear previous results efficiently
+                requestAnimationFrame(() => {
+                    const resultsBody = document.getElementById('resultsBody');
+                    while (resultsBody.firstChild) {
+                        resultsBody.removeChild(resultsBody.firstChild);
+                    }
+                });
+                
+                // Update button
+                const startBtn = document.querySelector('.btn-primary');
+                startBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Search';
+                startBtn.className = 'btn btn-danger';
+                
+                this.showStatus(`Starting search across ${this.state.servers.length} servers...`, 'loading');
+
+                try {
+                    const total = this.state.servers.length;
+                    this.state.totalServers = total;
+                    const concurrentRequests = parseInt(document.getElementById('concurrentRequests').value);
+                    
+                    // Use smaller batches for better responsiveness
+                    for (let i = 0; i < total; i += Math.min(concurrentRequests, 5)) {
+                        if (!this.state.running) break;
+                        
+                        const batchSize = Math.min(concurrentRequests, total - i);
+                        const batchPromises = [];
+                        
+                        for (let j = 0; j < batchSize; j++) {
+                            const serverIdx = i + j;
+                            if (serverIdx >= total) break;
+                            
+                            const serverLine = this.state.servers[serverIdx];
+                            
+                            this.state.currentProcessingServer = serverLine;
+                            this.showCurrentServer(serverLine);
+                            this.state.skipCurrentServerFlag = false;
+                            
+                            const serverPromise = (async () => {
+                                try {
+                                    const result = await this.processSingleServer(serverLine);
+                                    
+                                    if (this.state.skipCurrentServerFlag) {
+                                        return null;
+                                    }
+                                    
+                                    return result;
+                                } catch (error) {
+                                    return null;
+                                }
+                            })();
+                            
+                            batchPromises.push(serverPromise);
+                        }
+                        
+                        const batchResults = await Promise.allSettled(batchPromises);
+                        
+                        // Process batch results with yield to prevent blocking
+                        for (let batchIdx = 0; batchIdx < batchResults.length; batchIdx++) {
+                            const serverIdx = i + batchIdx;
+                            if (serverIdx >= total) continue;
+                            
+                            this.state.currentServer = serverIdx + 1;
+                            
+                            const result = batchResults[batchIdx];
+                            if (result.status === 'fulfilled' && result.value) {
+                                if (result.value.matches.length > 0) {
+                                    this.state.results.push(result.value);
+                                    
+                                    // Incremental rendering for better performance
+                                    if (this.state.results.length % 10 === 0) {
+                                        await this.yieldToMain();
+                                    }
+                                }
+                            }
+                            
+                            const progress = Math.round(((serverIdx + 1) / total) * 100);
+                            this.updateProgress(serverIdx + 1, total, progress);
+                            
+                            if ((serverIdx + 1) % 5 === 0 || (serverIdx + 1) === total) {
+                                const remaining = total - (serverIdx + 1);
+                                this.showStatus(`Processed ${serverIdx + 1}/${total} servers (${remaining} remaining)...`, 'loading');
+                            }
+                            
+                            // Allow UI to update
+                            if (!backgroundMode && batchIdx % 3 === 0) {
+                                await this.yieldToMain();
+                            }
+                        }
+                        
+                        // Clear current server display
+                        this.state.currentProcessingServer = null;
+                        this.showCurrentServer(null);
+                        
+                        // Yield to prevent blocking
+                        await this.yieldToMain();
+                    }
+
+                    // Final render
+                    this.renderResults();
+                    
+                    if (this.state.running) {
+                        const totalMatches = this.state.matchedItems.live + this.state.matchedItems.vod + this.state.matchedItems.series;
+                        this.showStatus(`Search completed! Found ${totalMatches} items across ${this.state.results.length} servers`, 'success');
+                    } else {
+                        this.showStatus('Search stopped by user', 'info');
+                    }
+                    
+                } catch (error) {
+                    this.showStatus(`Error: ${error.message}`, 'error');
+                } finally {
+                    // Clear current server display
+                    this.state.currentProcessingServer = null;
+                    this.showCurrentServer(null);
+                    
+                    // Reset button
+                    const startBtn = document.querySelector('.btn-danger, .btn-primary');
+                    startBtn.innerHTML = '<i class="fas fa-search"></i> Start Search';
+                    startBtn.className = 'btn btn-primary';
+                    this.state.running = false;
+                    
+                    // Force garbage collection hint
+                    if (window.gc) {
+                        window.gc();
+                    }
+                }
+            }
+            
+            // Helper to yield to main thread
+            yieldToMain() {
+                return new Promise(resolve => {
+                    setTimeout(resolve, 0);
+                });
+            }
+            
+            toggleSelectAll() {
+                const selectAll = document.getElementById('selectAll');
+                const checkboxes = document.querySelectorAll('.item-checkbox');
+                const allChecked = selectAll.checked;
+                
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = allChecked;
+                    const itemId = checkbox.dataset.itemId;
+                    if (allChecked) {
+                        this.state.selectedItems.add(itemId);
+                    } else {
+                        this.state.selectedItems.delete(itemId);
+                    }
+                });
+                
+                this.updateExportButtons();
+            }
+            
+            toggleItemSelection(checkbox) {
+                const itemId = checkbox.dataset.itemId;
+                if (checkbox.checked) {
+                    this.state.selectedItems.add(itemId);
+                } else {
+                    this.state.selectedItems.delete(itemId);
+                }
+                
+                const totalCheckboxes = document.querySelectorAll('.item-checkbox').length;
+                const checkedCount = document.querySelectorAll('.item-checkbox:checked').length;
+                document.getElementById('selectAll').checked = totalCheckboxes > 0 && checkedCount === totalCheckboxes;
+                
+                this.updateExportButtons();
+            }
+            
+            sortResults() {
+                const allMatches = [];
+                this.state.results.forEach(result => {
+                    result.matches.forEach(match => {
+                        allMatches.push({
+                            ...match,
+                            server: result.server,
+                            user: result.user,
+                            pass: result.pass
+                        });
+                    });
+                });
+
+                allMatches.sort((a, b) => {
+                    let valA, valB;
+                    
+                    switch (this.state.sortColumn) {
+                        case 'type':
+                            valA = a.type;
+                            valB = b.type;
+                            break;
+                        case 'items':
+                            valA = a.count;
+                            valB = b.count;
+                            break;
+                        case 'expiry':
+                            valA = a.expiry === 'Unknown' ? '9999-12-31' : a.expiry;
+                            valB = b.expiry === 'Unknown' ? '9999-12-31' : b.expiry;
+                            break;
+                        default:
+                            return 0;
+                    }
+                    
+                    if (this.state.sortDirection === 'asc') {
+                        return valA < valB ? -1 : valA > valB ? 1 : 0;
+                    } else {
+                        return valA > valB ? -1 : valA < valB ? 1 : 0;
+                    }
+                });
+
+                const sortedResults = [];
+                const serverMap = new Map();
+                
+                allMatches.forEach(match => {
+                    const serverKey = `${match.server}_${match.user}_${match.pass}`;
+                    if (!serverMap.has(serverKey)) {
+                        serverMap.set(serverKey, {
+                            server: match.server,
+                            user: match.user,
+                            pass: match.pass,
+                            expiry: match.expiry,
+                            matches: []
+                        });
+                    }
+                    serverMap.get(serverKey).matches.push(match);
+                });
+                
+                serverMap.forEach(result => {
+                    sortedResults.push(result);
+                });
+                
+                this.state.results = sortedResults;
+            }
+            
+            renderResults() {
+                // Use requestAnimationFrame for smooth rendering
+                requestAnimationFrame(() => {
+                    // Sort if needed
+                    if (this.state.sortColumn) {
+                        this.sortResults();
+                    }
+                    
+                    const resultsBody = document.getElementById('resultsBody');
+                    
+                    // Clear existing content
+                    while (resultsBody.firstChild) {
+                        resultsBody.removeChild(resultsBody.firstChild);
+                    }
+                    
+                    if (this.state.results.length === 0) {
+                        resultsBody.innerHTML = `
+                            <tr>
+                                <td colspan="7">
+                                    <div class="empty-state">
+                                        <i class="fas fa-search"></i>
+                                        <p>No matches found. Try different keywords or servers.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                        return;
+                    }
+
+                    // Update sort indicators
+                    document.querySelectorAll('th[data-sort]').forEach(th => {
+                        th.classList.remove('sort-asc', 'sort-desc');
+                        if (th.dataset.sort === this.state.sortColumn) {
+                            th.classList.add(`sort-${this.state.sortDirection}`);
+                        }
+                    });
+
+                    // Render in batches for better performance
+                    this.renderInBatches(this.state.results, resultsBody);
+                    
+                    // Setup select all checkbox
+                    document.getElementById('selectAll').onchange = () => this.toggleSelectAll();
+                    
+                    // Update counts display
+                    this.updateResultsCounts();
+                    document.getElementById('resultsCount').style.display = 'block';
+                    document.getElementById('resultsSection').style.display = 'block';
+                    document.getElementById('progressContainer').style.display = 'none';
+                    document.getElementById('speedIndicators').style.display = 'none';
+                    
+                    // Update export buttons
+                    this.updateExportButtons();
+                });
+            }
+            
+            // Render results in batches to prevent UI freezing
+            renderInBatches(results, container) {
+                const batchSize = 20; // Render 20 servers at a time
+                let currentIndex = 0;
+                
+                const renderBatch = () => {
+                    const endIndex = Math.min(currentIndex + batchSize, results.length);
+                    
+                    const fragment = document.createDocumentFragment();
+                    
+                    for (let i = currentIndex; i < endIndex; i++) {
+                        const result = results[i];
+                        result.matches.forEach((match, matchIndex) => {
+                            const tr = document.createElement('tr');
+                            
+                            // Add checked server class
+                            if (matchIndex === 0 && result.matches.length > 0) {
+                                tr.classList.add('checked-server');
+                            }
+                            
+                            // Selection checkbox
+                            const selectionCell = document.createElement('td');
+                            selectionCell.className = 'selection-cell';
+                            const checkbox = document.createElement('input');
+                            checkbox.type = 'checkbox';
+                            checkbox.className = 'item-checkbox';
+                            checkbox.dataset.itemId = match.itemId;
+                            checkbox.checked = this.state.selectedItems.has(match.itemId);
+                            checkbox.onchange = () => this.toggleItemSelection(checkbox);
+                            selectionCell.appendChild(checkbox);
+                            tr.appendChild(selectionCell);
+                            
+                            // Server cell
+                            if (matchIndex === 0) {
+                                const serverCell = document.createElement('td');
+                                serverCell.className = 'server-cell';
+                                
+                                const serverContent = document.createElement('div');
+                                serverContent.style.display = 'flex';
+                                serverContent.style.alignItems = 'center';
+                                serverContent.style.gap = '8px';
+                                
+                                if (result.matches.length > 0) {
+                                    const checkIcon = document.createElement('i');
+                                    checkIcon.className = 'fas fa-check-circle';
+                                    checkIcon.style.color = '#48bb78';
+                                    checkIcon.title = 'Server has matches';
+                                    serverContent.appendChild(checkIcon);
+                                }
+                                
+                                const serverText = document.createElement('span');
+                                serverText.textContent = result.server;
+                                serverText.style.overflow = 'hidden';
+                                serverText.style.textOverflow = 'ellipsis';
+                                serverText.style.whiteSpace = 'nowrap';
+                                serverContent.appendChild(serverText);
+                                
+                                serverCell.appendChild(serverContent);
+                                serverCell.rowSpan = result.matches.length;
+                                tr.appendChild(serverCell);
+                            }
+                            
+                            // Category/Channel cell
+                            const categoryCell = document.createElement('td');
+                            const details = document.createElement('details');
+                            const summary = document.createElement('summary');
+                            summary.textContent = match.label;
+                            summary.style.cursor = 'pointer';
+                            
+                            const channelsContainer = document.createElement('div');
+                            channelsContainer.className = 'channels-container';
+                            
+                            // Limit displayed items to prevent DOM overload
+                            const displayItems = match.items.slice(0, 50);
+                            displayItems.forEach((item, itemIndex) => {
+                                const channelItem = document.createElement('div');
+                                channelItem.className = 'channel-item';
+                                
+                                const channelInfo = document.createElement('div');
+                                channelInfo.className = 'channel-info';
+                                
+                                const channelNumber = document.createElement('div');
+                                channelNumber.className = 'channel-number';
+                                channelNumber.textContent = itemIndex + 1;
+                                
+                                const channelName = document.createElement('div');
+                                channelName.className = 'channel-name';
+                                channelName.textContent = item.name;
+                                channelName.title = item.name;
+                                
+                                const channelActions = document.createElement('div');
+                                channelActions.className = 'channel-actions';
+                                
+                                const playBtn = document.createElement('button');
+                                playBtn.className = 'btn-small';
+                                playBtn.style.background = '#48bb78';
+                                playBtn.style.color = 'white';
+                                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                                playBtn.title = 'Play';
+                                playBtn.onclick = (e) => {
+                                    e.stopPropagation();
+                                    window.open(item.url, '_blank');
+                                };
+                                
+                                const copyBtn = document.createElement('button');
+                                copyBtn.className = 'btn-small';
+                                copyBtn.style.background = '#4299e1';
+                                copyBtn.style.color = 'white';
+                                copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                                copyBtn.title = 'Copy URL';
+                                copyBtn.onclick = (e) => {
+                                    e.stopPropagation();
+                                    navigator.clipboard.writeText(item.url);
+                                    this.showStatus('URL copied to clipboard', 'success');
+                                };
+                                
+                                channelActions.appendChild(playBtn);
+                                channelActions.appendChild(copyBtn);
+                                
+                                channelInfo.appendChild(channelNumber);
+                                channelInfo.appendChild(channelName);
+                                channelInfo.appendChild(channelActions);
+                                channelItem.appendChild(channelInfo);
+                                channelsContainer.appendChild(channelItem);
+                            });
+                            
+                            // Show count if there are more items
+                            if (match.items.length > 50) {
+                                const moreItem = document.createElement('div');
+                                moreItem.className = 'channel-item';
+                                moreItem.style.justifyContent = 'center';
+                                moreItem.style.fontSize = '0.8rem';
+                                moreItem.style.color = '#718096';
+                                moreItem.textContent = `... and ${match.items.length - 50} more items`;
+                                channelsContainer.appendChild(moreItem);
+                            }
+                            
+                            details.appendChild(summary);
+                            details.appendChild(channelsContainer);
+                            categoryCell.appendChild(details);
+                            tr.appendChild(categoryCell);
+                            
+                            // Type cell
+                            const typeCell = document.createElement('td');
+                            const typeSpan = document.createElement('span');
+                            typeSpan.className = `type-cell type-${match.type}`;
+                            typeSpan.textContent = match.type.toUpperCase();
+                            typeCell.appendChild(typeSpan);
+                            tr.appendChild(typeCell);
+                            
+                            // Count cell
+                            const countCell = document.createElement('td');
+                            countCell.className = 'count-cell';
+                            countCell.textContent = match.count;
+                            tr.appendChild(countCell);
+                            
+                            // Expiry cell
+                            if (matchIndex === 0) {
+                                const expiryCell = document.createElement('td');
+                                expiryCell.className = 'expiry-cell';
+                                expiryCell.textContent = result.expiry;
+                                expiryCell.rowSpan = result.matches.length;
+                                tr.appendChild(expiryCell);
+                            }
+                            
+                            // Actions cell
+                            const actionsCell = document.createElement('td');
+                            actionsCell.className = 'actions-cell';
+                            
+                            const exportBtn = document.createElement('button');
+                            exportBtn.className = 'btn-small';
+                            exportBtn.style.background = '#9f7aea';
+                            exportBtn.style.color = 'white';
+                            exportBtn.innerHTML = '<i class="fas fa-download"></i> VLC';
+                            exportBtn.title = 'Export as VLC playlist';
+                            exportBtn.onclick = (e) => {
+                                e.stopPropagation();
+                                this.exportCategoryVLC(match);
+                            };
+                            
+                            const fetchBtn = document.createElement('button');
+                            fetchBtn.className = 'btn-small';
+                            fetchBtn.style.background = '#ed8936';
+                            fetchBtn.style.color = 'white';
+                            fetchBtn.innerHTML = '<i class="fas fa-external-link-alt"></i> Open';
+                            fetchBtn.title = 'Open server in new tab';
+                            fetchBtn.onclick = (e) => {
+                                e.stopPropagation();
+                                const m3uUrl = `${result.server}/get.php?username=${encodeURIComponent(result.user)}&password=${encodeURIComponent(result.pass)}&type=m3u_plus`;
+                                window.open(m3uUrl, '_blank');
+                            };
+                            
+                            actionsCell.appendChild(exportBtn);
+                            actionsCell.appendChild(fetchBtn);
+                            tr.appendChild(actionsCell);
+                            
+                            fragment.appendChild(tr);
+                        });
+                    }
+                    
+                    container.appendChild(fragment);
+                    currentIndex = endIndex;
+                    
+                    // Continue rendering if there are more items
+                    if (currentIndex < results.length) {
+                        requestAnimationFrame(renderBatch);
+                    }
+                };
+                
+                // Start rendering
+                requestAnimationFrame(renderBatch);
+            }
+            
+            stopSearch() {
+                if (this.state.running) {
+                    this.state.running = false;
+                    if (this.state.abortController) {
+                        this.state.abortController.abort();
+                    }
+                    this.showStatus('Stopping search...', 'info');
+                    
+                    // Immediately render whatever results we have
+                    this.renderResults();
+                }
+            }
+            
+            clearAll() {
+                document.getElementById('serversInput').value = '';
+                document.getElementById('keywordsInput').value = '';
+                
+                // Clear results efficiently
+                requestAnimationFrame(() => {
+                    const resultsBody = document.getElementById('resultsBody');
+                    while (resultsBody.firstChild) {
+                        resultsBody.removeChild(resultsBody.firstChild);
+                    }
+                    
+                    document.getElementById('resultsCount').style.display = 'none';
+                    document.getElementById('resultsSection').style.display = 'none';
+                    document.getElementById('progressContainer').style.display = 'none';
+                    document.getElementById('exportButtons').style.display = 'none';
+                    document.getElementById('speedIndicators').style.display = 'none';
+                    document.getElementById('currentServerIndicator').style.display = 'none';
+                    document.getElementById('skipContainer').style.display = 'none';
+                });
+                
+                // Reset state
+                this.state = {
+                    servers: [],
+                    keywords: [],
+                    results: [],
+                    running: false,
+                    abortController: null,
+                    totalServers: 0,
+                    currentServer: 0,
+                    matchedItems: { live: 0, vod: 0, series: 0 },
+                    selectedItems: new Set(),
+                    sortColumn: null,
+                    sortDirection: 'asc',
+                    performanceStats: {
+                        startTime: null,
+                        serversProcessed: 0,
+                        successfulRequests: 0,
+                        failedRequests: 0,
+                        responseTimes: []
+                    },
+                    currentProcessingServer: null,
+                    skipCurrentServerFlag: false
+                };
+                
+                // Reset sort indicators
+                document.querySelectorAll('th[data-sort]').forEach(th => {
+                    th.classList.remove('sort-asc', 'sort-desc');
+                });
+                
+                this.showStatus('All fields cleared', 'success');
+            }
+            
+            exportCategoryVLC(match) {
+                if (!match.items || match.items.length === 0) {
+                    this.showStatus('No items to export', 'error');
+                    return;
+                }
+
+                let m3uContent = '#EXTM3U\n';
+                match.items.forEach(item => {
+                    m3uContent += `#EXTINF:-1,${item.name}\n`;
+                    m3uContent += `${item.url}\n`;
+                });
+
+                const safeLabel = match.label.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+                const filename = `VLC_${safeLabel}_${match.items.length}_${match.type}.m3u`;
+
+                const blob = new Blob([m3uContent], { type: 'audio/x-mpegurl' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                this.showStatus(`VLC playlist saved as ${filename}`, 'success');
+            }
+            
+            exportSelectedM3U() {
+                if (this.state.selectedItems.size === 0) {
+                    this.showStatus('No items selected for export', 'error');
+                    return;
+                }
+
+                let content = '';
+                const seenServers = new Set();
+                
+                this.state.results.forEach(result => {
+                    result.matches.forEach(match => {
+                        if (this.state.selectedItems.has(match.itemId)) {
+                            const serverKey = `${result.server}\n${result.user}`;
+                            if (!seenServers.has(serverKey)) {
+                                seenServers.add(serverKey);
+                                const m3uUrl = `${result.server}/get.php?username=${encodeURIComponent(result.user)}&password=${encodeURIComponent(result.pass)}&type=m3u_plus`;
+                                content += `${m3uUrl}\nExpiry: ${result.expiry}\n\n`;
+                            }
+                        }
+                    });
+                });
+
+                const filename = `IPTV_Finder_Selected_M3U_${new Date().toISOString().slice(0,10)}.txt`;
+                this.downloadFile(content, filename, 'text/plain');
+            }
+            
+            exportSelectedXtream() {
+                if (this.state.selectedItems.size === 0) {
+                    this.showStatus('No items selected for export', 'error');
+                    return;
+                }
+
+                let content = '';
+                const seenServers = new Set();
+                
+                this.state.results.forEach(result => {
+                    result.matches.forEach(match => {
+                        if (this.state.selectedItems.has(match.itemId)) {
+                            const serverKey = `${result.server}\n${result.user}`;
+                            if (!seenServers.has(serverKey)) {
+                                seenServers.add(serverKey);
+                                content += `Host: ${result.server}\n`;
+                                content += `Username: ${result.user}\n`;
+                                content += `Password: ${result.pass}\n`;
+                                if (result.expiry !== 'Unknown') {
+                                    content += `Expiry: ${result.expiry}\n`;
+                                }
+                                content += '=====================================\n\n';
+                            }
+                        }
+                    });
+                });
+
+                const filename = `IPTV_Finder_Selected_Xtream_${new Date().toISOString().slice(0,10)}.txt`;
+                this.downloadFile(content, filename, 'text/plain');
+            }
+            
+            exportSelectedVLC() {
+                if (this.state.selectedItems.size === 0) {
+                    this.showStatus('No items selected for export', 'error');
+                    return;
+                }
+
+                let m3uContent = '#EXTM3U\n';
+                const addedUrls = new Set();
+                
+                // Limit to first 1000 items to prevent huge files
+                let itemCount = 0;
+                const maxItems = 1000;
+                
+                outerLoop:
+                for (const result of this.state.results) {
+                    for (const match of result.matches) {
+                        if (this.state.selectedItems.has(match.itemId)) {
+                            for (const item of match.items) {
+                                if (!addedUrls.has(item.url)) {
+                                    addedUrls.add(item.url);
+                                    m3uContent += `#EXTINF:-1,${match.label} - ${item.name}\n`;
+                                    m3uContent += `${item.url}\n`;
+                                    itemCount++;
+                                    
+                                    if (itemCount >= maxItems) {
+                                        m3uContent += `# Total items limited to ${maxItems} for performance\n`;
+                                        break outerLoop;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                const filename = `IPTV_Finder_Selected_VLC_${new Date().toISOString().slice(0,10)}.m3u`;
+                const blob = new Blob([m3uContent], { type: 'audio/x-mpegurl' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                this.showStatus(`Selected VLC playlist saved as ${filename} (${itemCount} items)`, 'success');
+            }
+            
+            downloadFile(content, filename, mimeType) {
+                const blob = new Blob([content], { type: mimeType });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                this.showStatus(`Exported ${filename} with ${this.state.selectedItems.size} selected items`, 'success');
+            }
+        }
+
+        // Initialize the application
+        let app;
+
+        window.onload = function() {
+            app = new IPTVFinder();
+            
+            // Make functions globally available
+            window.startSearch = () => app.startSearch();
+            window.startBackgroundSearch = () => app.startBackgroundSearch();
+            window.pasteServers = () => app.pasteServers();
+            window.clearAll = () => app.clearAll();
+            window.skipCurrentServer = () => app.skipCurrentServer();
+            window.exportSelectedM3U = () => app.exportSelectedM3U();
+            window.exportSelectedXtream = () => app.exportSelectedXtream();
+            window.exportSelectedVLC = () => app.exportSelectedVLC();
+        };
+    </script>
+</body>
+</html>
