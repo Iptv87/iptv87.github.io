@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>STB EMU Cleaner</title>
+<style>
+ :root {
+  --bg:#0f172a; --card:#111827; --surface:#0b1020; --border:#1f2937;
+  --muted:#94a3b8; --text:#e5e7eb; --accent:#22c55e; --accent2:#38bdf8;
+  --warn:#f59e0b; --error:#ef4444; --info:#8b5cf6;
+  --theme-primary: #22c55e; /* Default theme */
+ }
+ *{box-sizing:border-box}
+ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans";line-height:1.5;transition:background 0.3s ease}
+ header,footer{padding:1rem 1.25rem}
+ header h1{margin:0 0 .25rem;font-size:1.5rem;font-weight:600;background:linear-gradient(90deg, var(--accent2), var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+ header p{margin:0;color:var(--muted);font-size:.9rem}
+ .theme-selector{display:flex;gap:.5rem;margin-top:.5rem;align-items:center}
+ .theme-btn{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);cursor:pointer;transition:transform 0.2s}
+ .theme-btn:hover{transform:scale(1.1)}
+ .theme-btn.active{border-color:var(--text)}
+ main{padding:1.25rem}
+ .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+ .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem}
+ .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;box-shadow:0 4px 6px -1px rgba(0,0,0,0.2)}
+ .card h2{margin:0 0 .75rem;font-size:1.15rem;font-weight:600;color:var(--accent2);padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+ .row{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap}
+ .small{font-size:.85rem;color:var(--muted)}
+ .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+ textarea{width:100%;min-height:140px;resize:vertical;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-family:inherit;font-size:.9rem;transition:border-color 0.2s ease}
+ textarea:focus{outline:none;border-color:var(--accent2);box-shadow:0 0 0 2px rgba(56, 189, 248, 0.2)}
+ input[type="text"],input[type="url"]{width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:.6rem .75rem;font-size:.9rem;transition:border-color 0.2s ease}
+ input[type="text"]:focus,input[type="url"]:focus{outline:none;border-color:var(--accent2);box-shadow:0 0 0 2px rgba(56, 189, 248, 0.2)}
+ input[type="file"]{color:var(--text);padding:.5rem;background:var(--surface);border:1px dashed var(--border);border-radius:8px;width:100%;cursor:pointer;transition:border-color 0.2s ease}
+ input[type="file"]:hover{border-color:var(--accent2)}
+ button{background:#1f2937;color:var(--text);border:1px solid #334155;border-radius:8px;padding:.6rem 1rem;cursor:pointer;font-weight:500;font-size:.9rem;transition:all 0.2s ease;display:inline-flex;align-items:center;gap:.4rem}
+ button:hover{background:#2d3748;transform:translateY(-1px);box-shadow:0 2px 4px rgba(0,0,0,0.2)}
+ button.primary{background:var(--accent);color:#04120b;border-color:#16a34a}
+ button.primary:hover{background:#16a34a;}
+ button.alt{background:var(--accent2);color:#061318;border-color:#0ea5e9}
+ button.alt:hover{background:#0ea5e9;}
+ button.warn{background:var(--warn);color:#0a0a0a;border-color:#d97706}
+ button.warn:hover{background:#d97706;}
+ button.info{background:var(--info);color:#ffffff;border-color:#7c3aed}
+ button.info:hover{background:#7c3aed;}
+ button:disabled{opacity:.6;cursor:not-allowed;transform:none !important}
+ .list{max-height:330px;overflow:auto;border:1px dashed #334155;border-radius:8px;padding:.75rem;background:var(--surface);scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+ .list::-webkit-scrollbar{width:8px}
+ .list::-webkit-scrollbar-track{background:transparent}
+ .list::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+ .item{border-bottom:1px dashed var(--border);padding:.5rem 0;transition:background-color 0.2s ease}
+ .item:hover{background:rgba(255,255,255,0.03)}
+ .item:last-child{border-bottom:none}
+ .status{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:600}
+ .ok{background:rgba(34, 197, 94, 0.15);color:var(--accent);border:1px solid rgba(34, 197, 94, 0.3)}
+ .bad{background:rgba(239, 68, 68, 0.15);color:var(--error);border:1px solid rgba(239, 68, 68, 0.3)}
+ .unk{background:rgba(148, 163, 184, 0.15);color:var(--muted);border:1px solid rgba(148, 163, 184, 0.3)}
+ .pill{display:inline-block;font-size:.7rem;padding:.15rem .5rem;border-radius:999px;border:1px solid #334155;background:#0d1426;color:var(--muted);margin-left:.25rem;font-weight:500}
+ .sep{color:var(--muted);opacity:0.7}
+ .group-btn{background:#0d1426;border:1px solid #334155;padding:.4rem .75rem;border-radius:8px;cursor:pointer;color:var(--text);font-weight:500;transition:all 0.2s ease;width:100%;text-align:left}
+ .group-btn:hover{background:var(--surface);border-color:var(--accent2)}
+ /* Progress bar */
+ .progress-wrap{background:#0d1426;border:1px solid #334155;border-radius:8px;overflow:hidden;height:16px}
+ .progress-bar{height:100%;background:linear-gradient(90deg,#0ea5e9,#22c55e);width:0%;transition:width 0.3s ease}
+ .stats{display:flex;gap:1rem;margin-top:.5rem}
+ .stat-box{padding:.5rem .75rem;background:var(--surface);border-radius:8px;border:1px solid var(--border);flex:1;text-align:center}
+ .stat-value{font-size:1.25rem;font-weight:600}
+ .stat-label{font-size:.75rem;color:var(--muted)}
+ code{background:var(--surface);padding:.2rem .4rem;border-radius:4px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;font-size:.85em;color:var(--accent2)}
+ details{border:1px solid var(--border);border-radius:8px;padding:.75rem;margin-top:.5rem}
+ details summary{cursor:pointer;font-weight:500}
+ details[open] summary{margin-bottom:.75rem}
+ .section-title{display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem}
+ .section-title h2{margin:0}
+ .icon{width:20px;height:20px}
+ .input-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+ .full-width{grid-column:1 / -1}
+ .results-grid{display:grid;grid-template-columns:55% 45%;gap:1.25rem;margin-top:1.25rem}
+ @media (max-width: 768px){
+  .grid-2,.grid-3,.input-grid,.results-grid{grid-template-columns:1fr}
+  .full-width{grid-column:1}
+ }
+ .export-buttons{display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap}
+
+
+.home-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: linear-gradient(135deg, rgba(0, 198, 255, 0.2), rgba(0, 114, 255, 0.2));
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    z-index: 9999;
+    border: 1px solid rgba(0, 198, 255, 0.5);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.home-button:hover {
+    background: linear-gradient(135deg, rgba(0, 198, 255, 0.4), rgba(0, 114, 255, 0.4));
+    transform: translateX(-5px);
+    border-color: #00c6ff;
+    box-shadow: 0 5px 20px rgba(0, 198, 255, 0.3);
+}
+
+.home-button i {
+    font-size: 1.1rem;
+}
+
+/* Add padding to main content to prevent overlap */
+.main-content, .container, .content-wrapper {
+    padding-top: 80px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .home-button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        top: 15px;
+        left: 15px;
+    }
+    
+    .main-content, .container, .content-wrapper {
+        padding-top: 70px;
+    }
+}
+
+
+</style>
+</head>
+<body>
+<a href="index.html" class="home-button">
+    <i class="fas fa-home"></i> Home
+</a>
+<header>
+  <h1>STB EMU Cleaner</h1>
+  <p class="small">For authorized use by portal admins. Parse Host & MAC, check availability with progress, and manage portal entries.</p>
+  <div class="theme-selector">
+    <span class="small">Theme:</span>
+    <button class="theme-btn active" style="background:#1e3a8a" onclick="setTheme('blue')" title="Blue Theme"></button>
+    <button class="theme-btn" style="background:#0f766e" onclick="setTheme('teal')" title="Teal Theme"></button>
+    <button class="theme-btn" style="background:#7c3aed" onclick="setTheme('purple')" title="Purple Theme"></button>
+  </div>
+</header>
+
+<main>
+  <!-- Only Tab 1 - Upload/Filter + Check -->
+  <section id="mainPanel" class="tab-panel active">
+    <!-- Input Section: Raw Data + Parsed Entries (50-50 split) -->
+    <div class="input-grid">
+      <div class="card">
+        <div class="section-title">
+          <h2>Input</h2>
+          <span class="pill">Step 1</span>
+        </div>
+        <input id="fileInput" type="file" accept=".txt,.log,.csv" />
+        <textarea id="rawInput" placeholder="Paste text here or select a file above. The parser extracts hosts, MACs, and expiry dates." style="min-height:320px; margin-top:.75rem;"></textarea>
+        <div class="row" style="margin-top:.75rem;">
+          <button id="processBtn" class="primary">⚙️ Process & Normalize</button>
+          <button id="downloadFilteredBtn" class="alt">💾 Download filtered .txt</button>
+          <button id="clearInputBtn" class="warn">🗑️ Clear</button>
+        </div>
+        <div class="export-buttons">
+          <button id="exportSortedFilteredBtn" class="info">📊 Export Sorted</button>
+        </div>
+        <p class="small" style="margin-top:.5rem;">Normalized entry: <span class="mono">Host</span> → <span class="mono">AA:BB:CC:DD:EE:FF</span> → separator. Other text ignored.</p>
+      </div>
+
+      <div class="card">
+        <div class="section-title">
+          <h2>Parsed Entries</h2>
+          <span class="pill" id="parsedCount">0</span>
+        </div>
+        <div id="parsedList" class="list" style="max-height:450px;"></div>
+      </div>
+    </div>
+
+    <!-- Reachability Check (Full width) -->
+    <div class="card full-width">
+      <div class="section-title">
+        <h2>Reachability Check</h2>
+        <span class="pill" id="checkingCount">0</span>
+      </div>
+      <p class="small">Optional CORS Proxy: <code>https://your-proxy.example/fetch?url=</code></p>
+      <input id="proxyUrl" type="url" placeholder="https://your-proxy.example/fetch?url=" />
+      <div class="row" style="margin-top:.75rem;">
+        <button id="checkBtn" class="primary">🔍 Check Portals</button>
+        <button id="stopBtn" class="warn" disabled>⏹️ Stop</button>
+        <button id="clearStatusBtn" class="warn">🗑️ Clear Status</button>
+      </div>
+      <div class="progress-wrap" style="margin-top:.75rem;">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+      <div class="stats">
+        <div class="stat-box">
+          <div class="stat-value" id="progressText">0%</div>
+          <div class="stat-label">Progress</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="countActive">0</div>
+          <div class="stat-label">Active</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="countInactive">0</div>
+          <div class="stat-label">Inactive</div>
+        </div>
+      </div>
+      <div class="small" style="margin-top:.5rem;padding:.5rem;background:var(--surface);border-radius:6px;">
+        🔍 Testing: <span id="currentPortal" class="mono">—</span>
+      </div>
+    </div>
+
+    <!-- Results: Active + Inactive (55-45 split) -->
+    <div class="results-grid">
+      <div class="card">
+        <div class="section-title">
+          <h2>Active Results</h2>
+          <span class="ok status" id="activeCount">0</span>
+        </div>
+        <div class="small" style="margin:-.25rem 0 .75rem">Shows expiry <em>date only</em> when detected (after MAC with | separator).</div>
+        <div id="activeBox" class="list" style="max-height:350px;"></div>
+        <div class="row" style="margin-top:.75rem;">
+          <button id="downloadActiveBtn" class="alt">💾 Download Active .txt</button>
+        </div>
+        <div class="export-buttons">
+          <button id="exportSortedActiveBtn" class="info">📊 Export Sorted</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">
+          <h2>Inactive / Unknown Results</h2>
+          <span class="bad status" id="inactiveCount">0</span>
+        </div>
+        <div id="inactiveBox" class="list" style="max-height:350px;"></div>
+        <div class="row" style="margin-top:.75rem;">
+          <button id="downloadInactiveBtn" class="alt">💾 Download Inactive .txt</button>
+        </div>
+        <div class="export-buttons">
+          <button id="exportSortedInactiveBtn" class="info">📊 Export Sorted</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="small">
+  Built for authorized administrative checks. © 2026
+</footer>
+
+<script>
+/* ===========================
+ Theme Management
+ =========================== */
+function setTheme(theme) {
+  const root = document.documentElement;
+  const themeBtns = document.querySelectorAll('.theme-btn');
+  if (event && event.target) {
+    themeBtns.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+  
+  switch(theme) {
+    case 'blue':
+      root.style.setProperty('--bg', '#0f172a');
+      root.style.setProperty('--card', '#111827');
+      root.style.setProperty('--surface', '#0b1020');
+      root.style.setProperty('--border', '#1f2937');
+      root.style.setProperty('--accent', '#3b82f6');
+      root.style.setProperty('--accent2', '#0ea5e9');
+      root.style.setProperty('--warn', '#f59e0b');
+      root.style.setProperty('--error', '#ef4444');
+      root.style.setProperty('--info', '#8b5cf6');
+      break;
+    case 'teal':
+      root.style.setProperty('--bg', '#042f2e');
+      root.style.setProperty('--card', '#134e4a');
+      root.style.setProperty('--surface', '#0d443e');
+      root.style.setProperty('--border', '#115e59');
+      root.style.setProperty('--accent', '#14b8a6');
+      root.style.setProperty('--accent2', '#0d9488');
+      root.style.setProperty('--warn', '#f59e0b');
+      root.style.setProperty('--error', '#ef4444');
+      root.style.setProperty('--info', '#0891b2');
+      break;
+    case 'purple':
+      root.style.setProperty('--bg', '#1e1b4b');
+      root.style.setProperty('--card', '#312e81');
+      root.style.setProperty('--surface', '#2a2866');
+      root.style.setProperty('--border', '#4f46e5');
+      root.style.setProperty('--accent', '#8b5cf6');
+      root.style.setProperty('--accent2', '#a855f7');
+      root.style.setProperty('--warn', '#f59e0b');
+      root.style.setProperty('--error', '#ef4444');
+      root.style.setProperty('--info', '#8b5cf6');
+      break;
+  }
+}
+
+/* ===========================
+ Utilities
+ =========================== */
+const macRegexes = [
+  /(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}/g,
+  /\b[0-9A-Fa-f]{12}\b/g
+];
+const hostRegex = /(https?:\/\/[^\s]+)|\b(?:(?:[a-zA-Z0-9_-]+\.)+[a-zA-Z]{2,})(?::\d+)?(?:\/[^\s]*)?\b|\b(?:\d{1,3}\.){3}\d{1,3}(?::\d+)?(?:\/[^\s]*)?\b/g;
+const exp1 = /Expired\s*on\s*:\s*([^\n\r]+)/i;
+const exp2 = /Expires\s*[\>➤:]\s*([0-9]{1,2}\/[0-9]{1,2}\/[0-9]{2,4})/i;
+const probePaths = ['/', '/stalker_portal/', '/portal/', '/c/', '/server/load.php'];
+
+function normalizeMac(raw){
+  if(!raw) return null;
+  const hex = raw.replace(/[^0-9A-Fa-f]/g,'').toUpperCase();
+  if(hex.length!==12) return null;
+  return hex.match(/.{1,2}/g).join(':');
+}
+function normalizeHost(raw){
+  if(!raw) return null;
+  let s = raw.trim();
+  if(/^https?:\/\//i.test(s)) return s.replace(/[,\)\]\}]+$/,'');
+  s = s.replace(/[,\)\]\}]+$/,'');
+  return 'http://' + s;
+}
+function escapeHtml(s){return (s??'').toString().replace(/[&<>"']/g,m=>({'&':'&','<':'<','>':'>','"':'"',"'":'&#039;'}[m]));}
+function dedupe(arr, keyFn){const seen=new Set();const out=[];for(const x of arr){const k=keyFn(x);if(!seen.has(k)){seen.add(k);out.push(x);}}return out;}
+function hhmmss(d=new Date()){const p=n=>String(n).padStart(2,'0');return `${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;}
+function timeMMSS(d=new Date()){
+  const p=n=>String(n).padStart(2,'0');
+  return `${p(d.getMinutes())}-${p(d.getSeconds())}`;
+}
+function downloadText(filename, text){
+  const blob = new Blob([text], {type:'text/plain'}); const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=filename; a.click(); URL.revokeObjectURL(a.href);
+}
+function monthToNum(m){
+  const map = {jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+  const k = (m||'').slice(0,3).toLowerCase();
+  return map[k]||null;
+}
+function toDateOnly(str){
+  if(!str) return null;
+  const m1 = str.match(/([A-Za-z]+)\s+(\d{1,2}),\s*(\d{4})/);
+  if(m1){
+    const M = monthToNum(m1[1]), D = parseInt(m1[2],10), Y = parseInt(m1[3],10);
+    if(M && D && Y) return `${Y}-${String(M).padStart(2,'0')}-${String(D).padStart(2,'0')}`;
+  }
+  const m2 = str.match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
+  if(m2){
+    const D = parseInt(m2[1],10), M = parseInt(m2[2],10), Yraw = m2[3];
+    const Y = Yraw.length===2 ? (2000 + parseInt(Yraw,10)) : parseInt(Yraw,10);
+    if(M && D && Y) return `${Y}-${String(M).padStart(2,'0')}-${String(D).padStart(2,'0')}`;
+  }
+  const m3 = str.match(/(\d{4})-(\d{2})-(\d{2})/);
+  if(m3) return m3[0];
+  return null;
+}
+
+/* ===========================
+ Sorting and Grouping Functions
+ =========================== */
+function sortAndGroupEntries(entries) {
+  const uniqueEntries = [];
+  const seen = new Set();
+  
+  for (const entry of entries) {
+    const key = `${entry.host}|${entry.mac}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      uniqueEntries.push(entry);
+    }
+  }
+  
+  const hostGroups = {};
+  for (const entry of uniqueEntries) {
+    const host = entry.host;
+    if (!hostGroups[host]) {
+      hostGroups[host] = [];
+    }
+    hostGroups[host].push(entry);
+  }
+  
+  const sortedGroups = Object.entries(hostGroups)
+    .sort((a, b) => b[1].length - a[1].length)
+    .map(([host, entries]) => ({
+      host,
+      entries: entries.sort((a, b) => a.mac.localeCompare(b.mac)),
+      count: entries.length
+    }));
+  
+  const result = [];
+  for (const group of sortedGroups) {
+    result.push(`# Host: ${group.host} (${group.count} entries)`);
+    for (const entry of group.entries) {
+      const exp = entry.expiryDate ? ` | ${entry.expiryDate}` : '';
+      result.push(`${entry.host}\n${entry.mac}${exp}\n===============================`);
+    }
+    result.push('');
+  }
+  return result.join('\n');
+}
+
+/* ===========================
+ Global State
+ =========================== */
+let entries = []; // {host, mac, expiryRaw, expiryDate, status, notes}
+let checking = false;
+let stopFlag = false;
+
+/* ===========================
+ TAB 1: Upload/Filter + Check
+ =========================== */
+const rawInput = document.getElementById('rawInput');
+const fileInput = document.getElementById('fileInput');
+
+fileInput.addEventListener('change', async ()=>{
+  const f = fileInput.files?.[0];
+  if(f){
+    try {
+      rawInput.value = await f.text();
+      setTimeout(() => {
+        processInput();
+      }, 100);
+    } catch(error) {
+      alert('Error reading file: ' + error.message);
+    }
+  }
+});
+
+document.getElementById('clearInputBtn').addEventListener('click', ()=> {
+  rawInput.value = '';
+  fileInput.value = '';
+  entries = [];
+  renderParsed();
+  renderActiveInactive();
+  resetProgress();
+});
+
+function processInput() {
+  const text = rawInput.value || '';
+  entries = parseEntriesWithExpiry(text);
+  renderParsed();
+  renderActiveInactive();
+  resetProgress();
+}
+
+document.getElementById('processBtn').addEventListener('click', processInput);
+
+document.getElementById('downloadFilteredBtn').addEventListener('click', ()=>{
+  if(!entries.length){ alert('Nothing to download yet.'); return; }
+  const txt = entries.map(e=>`${e.host}\n${e.mac}\n===============================`).join('\n');
+  downloadText(`Portal_Filtered_${timeMMSS()}.txt`, txt);
+});
+
+document.getElementById('exportSortedFilteredBtn').addEventListener('click', ()=>{
+  if(!entries.length){ alert('Nothing to export yet.'); return; }
+  const sortedText = sortAndGroupEntries(entries);
+  downloadText(`Portal_Sorted_Filtered_${timeMMSS()}.txt`, sortedText);
+});
+
+const parsedList   = document.getElementById('parsedList');
+const activeBox    = document.getElementById('activeBox');
+const inactiveBox  = document.getElementById('inactiveBox');
+const progressBar  = document.getElementById('progressBar');
+const progressText = document.getElementById('progressText');
+const countActive  = document.getElementById('countActive');
+const countInactive= document.getElementById('countInactive');
+const stopBtn      = document.getElementById('stopBtn');
+const currentPortal= document.getElementById('currentPortal');
+const parsedCount  = document.getElementById('parsedCount');
+const checkingCount= document.getElementById('checkingCount');
+const activeCount  = document.getElementById('activeCount');
+const inactiveCount= document.getElementById('inactiveCount');
+
+function renderParsed(){
+  if(!entries.length){ parsedList.innerHTML = '<div class="small">No entries yet.</div>'; parsedCount.textContent = '0'; return; }
+  parsedList.innerHTML = entries.map(e=>(
+    `<div class="item mono">
+      ${escapeHtml(e.host)}<br>${escapeHtml(e.mac)}${e.expiryDate?` | ${escapeHtml(e.expiryDate)}`:''}<br>
+      <span class="sep">===============================</span>
+    </div>`
+  )).join('');
+  parsedCount.textContent = entries.length;
+}
+
+function resetProgress(){
+  setProgress(0, entries.length || 0);
+  stopBtn.disabled = true;
+  currentPortal.textContent = '—';
+  checking = false;
+  stopFlag = false;
+}
+function setProgress(done, total){
+  const pct = total ? Math.round(100*done/total) : 0;
+  progressBar.style.width = pct + '%';
+  progressText.textContent = `${pct}%`;
+  checkingCount.textContent = `${done}/${total}`;
+  const a = entries.filter(e=>e.status==='active').length;
+  const i = entries.filter(e=>e.status==='inactive' || e.status==='unknown').length;
+  countActive.textContent = a; 
+  countInactive.textContent = i;
+  activeCount.textContent = a;
+  inactiveCount.textContent = i;
+}
+
+document.getElementById('clearStatusBtn').addEventListener('click', ()=>{
+  entries = entries.map(e=>({...e, status:'unchecked', notes:''}));
+  renderActiveInactive();
+  resetProgress();
+});
+
+document.getElementById('checkBtn').addEventListener('click', async ()=>{
+  if(!entries.length){ alert('Parse input first.'); return; }
+  if(checking) return;
+  checking = true; stopFlag = false; stopBtn.disabled = false;
+  const proxy = (document.getElementById('proxyUrl').value||'').trim();
+  const total = entries.length;
+  let done = 0;
+
+  for(let i=0;i<entries.length;i++){
+    if(stopFlag) break;
+    const e = entries[i];
+    entries[i] = {...e, status:'checking', notes:''}; 
+    renderActiveInactive();
+
+    currentPortal.textContent = e.host;
+
+    try{
+      const ok = await isPortalReachable(e.host, proxy);
+      entries[i] = {...e, status: ok?'active':'inactive', notes: ok?'reachable':'no response / blocked'};
+    }catch{
+      entries[i] = {...e, status:'unknown', notes:'CORS or network error'};
+    }
+    done++; setProgress(done, total);
+    renderActiveInactive();
+  }
+  checking = false; stopFlag = false; stopBtn.disabled = true;
+  currentPortal.textContent = '—';
+});
+
+stopBtn.addEventListener('click', ()=>{
+  if(checking){ stopFlag = true; }
+});
+
+async function isPortalReachable(host, proxy){
+  for(const p of probePaths){
+    const target = new URL(p, host).toString();
+    const url = proxy ? (proxy + encodeURIComponent(target)) : target;
+    try{
+      const resp = await fetch(url, { method:'GET', mode: proxy?'cors':'cors', redirect:'follow', headers:{'Accept':'*/*'} });
+      if([200,302,401,403].includes(resp.status)) return true;
+    }catch{/* continue */}
+  }
+  return false;
+}
+
+function renderActiveInactive(){
+  const act = entries.filter(e=>e.status==='active');
+  const ina = entries.filter(e=>e.status==='inactive' || e.status==='unknown');
+
+  activeBox.innerHTML = act.length ? act.map(e=>(
+    `<div class="item">
+      <div class="row mono" style="justify-content:space-between; gap:.75rem;">
+        <div style="flex:1 1 auto;">
+          ${escapeHtml(e.host)} <span class="ok status">ACTIVE</span><br>
+          ${escapeHtml(e.mac)}${e.expiryDate?` | ${escapeHtml(e.expiryDate)}`:''}
+        </div>
+      </div>
+    </div>`
+  )).join('') : '<div class="small">No active results yet.</div>';
+
+  inactiveBox.innerHTML = ina.length ? ina.map(e=>(
+    `<div class="item">
+      <div class="mono">${escapeHtml(e.host)} <span class="bad status">${escapeHtml(e.status.toUpperCase())}</span><br>${escapeHtml(e.mac)}${e.expiryDate?` | ${escapeHtml(e.expiryDate)}`:''}</div>
+      ${e.notes?'<div class="small">'+escapeHtml(e.notes)+'</div>':''}
+    </div>`
+  )).join('') : '<div class="small">No inactive results.</div>';
+}
+
+document.getElementById('downloadActiveBtn').addEventListener('click', ()=>{
+  const act = entries.filter(e=>e.status==='active');
+  if(!act.length){ alert('No active results to save.'); return; }
+  const txt = act.map(e=>{
+    const exp = e.expiryDate ? ` | ${e.expiryDate}` : '';
+    return `${e.host}\n${e.mac}${exp}\n===============================`;
+  }).join('\n');
+  downloadText(`Portal_Active_${timeMMSS()}.txt`, txt);
+});
+
+document.getElementById('downloadInactiveBtn').addEventListener('click', ()=>{
+  const ina = entries.filter(e=>e.status==='inactive' || e.status==='unknown');
+  if(!ina.length){ alert('No inactive results to save.'); return; }
+  const txt = ina.map(e=>{
+    const exp = e.expiryDate ? ` | ${e.expiryDate}` : '';
+    return `${e.host}\n${e.mac}${exp}\n===============================`;
+  }).join('\n');
+  downloadText(`Portal_Inactive_${timeMMSS()}.txt`, txt);
+});
+
+document.getElementById('exportSortedActiveBtn').addEventListener('click', ()=>{
+  const act = entries.filter(e=>e.status==='active');
+  if(!act.length){ alert('No active results to export.'); return; }
+  const sortedText = sortAndGroupEntries(act);
+  downloadText(`Portal_Sorted_Active_${timeMMSS()}.txt`, sortedText);
+});
+
+document.getElementById('exportSortedInactiveBtn').addEventListener('click', ()=>{
+  const ina = entries.filter(e=>e.status==='inactive' || e.status==='unknown');
+  if(!ina.length){ alert('No inactive results to export.'); return; }
+  const sortedText = sortAndGroupEntries(ina);
+  downloadText(`Portal_Sorted_Inactive_${timeMMSS()}.txt`, sortedText);
+});
+
+function parseEntriesWithExpiry(text){
+  const lines = (text||'').split(/\r?\n/);
+  let currentHost = null;
+  let lastEntryIdx = -1;
+  const list = [];
+  function pushEntry(mac){
+    const e = { host: currentHost || '', mac, expiryRaw: null, expiryDate: null, status: 'unchecked', notes: '' };
+    list.push(e);
+    lastEntryIdx = list.length - 1;
+  }
+  for(let i=0;i<lines.length;i++){
+    const line = lines[i];
+    const hosts = line.match(hostRegex) || [];
+    if(hosts.length){ currentHost = normalizeHost(hosts[0]); }
+    const macs = [];
+    for(const rx of macRegexes){
+      const found = line.match(rx) || [];
+      for(const raw of found){
+        const m = normalizeMac(raw);
+        if(m) macs.push(m);
+      }
+    }
+    for(const m of macs){ pushEntry(m); }
+    let exp = null;
+    const m1 = line.match(exp1); if(m1) exp = m1[1].trim();
+    const m2 = line.match(exp2); if(!exp && m2) exp = m2[1].trim();
+    if(exp && lastEntryIdx >= 0 && !list[lastEntryIdx].expiryRaw){
+      list[lastEntryIdx].expiryRaw = exp;
+      list[lastEntryIdx].expiryDate = toDateOnly(exp);
+    }
+  }
+  let lastHostSeen = null;
+  for(const e of list){
+    if(e.host) lastHostSeen = e.host;
+    else if(lastHostSeen) e.host = lastHostSeen;
+  }
+  const deduped = dedupe(list.filter(e=>e.host && e.mac), e=>`${e.host}|${e.mac}`);
+  return deduped;
+}
+</script>
+</body>
+</html>

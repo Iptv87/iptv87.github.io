@@ -1008,6 +1008,58 @@ nav a:hover {
 nav a:active {
     transform: scale(1);
 }
+
+.home-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: linear-gradient(135deg, rgba(0, 198, 255, 0.2), rgba(0, 114, 255, 0.2));
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    z-index: 9999;
+    border: 1px solid rgba(0, 198, 255, 0.5);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.home-button:hover {
+    background: linear-gradient(135deg, rgba(0, 198, 255, 0.4), rgba(0, 114, 255, 0.4));
+    transform: translateX(-5px);
+    border-color: #00cf6ff;
+    box-shadow: 0 5px 20px rgba(0, 198, 255, 0.3);
+}
+
+.home-button i {
+    font-size: 1.1rem;
+}
+
+/* Add padding to main content to prevent overlap */
+.main-content, .container, .content-wrapper {
+    padding-top: 80px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .home-button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        top: 15px;
+        left: 15px;
+    }
+    
+    .main-content, .container, .content-wrapper {
+        padding-top: 70px;
+    }
+}
 </style>
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -1023,6 +1075,9 @@ nav a:active {
             <div class="theme-btn theme-sunset-btn" data-theme="theme-sunset" title="Sunset Orange"></div>
             <div class="theme-btn theme-royal-btn" data-theme="theme-royal" title="Royal Purple"></div>
         </div>
+<a href="index.html" class="home-button">
+    <i class="fas fa-home"></i> Home
+</a>
 
         <h1>🚀 Fast IPTV Finder</h1>
         <p class="subtitle">Enhanced search with background processing and concurrent requests</p>
